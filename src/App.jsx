@@ -1,14 +1,14 @@
-import React from "react"
-import RiteshPatel from "./components/RiteshPatel/RiteshPatel"
+import React from "react";
+import RiteshPatel from "./components/RiteshPatel/RiteshPatel";
+import Portfolio from "./components/RiteshPatel/code";
 
 function App() {
- 
-
   return (
     <>
-      <RiteshPatel/>
+      <RiteshPatel />
+     
     </>
-  )
+  );
 }
 
-export default App
+export default App;
