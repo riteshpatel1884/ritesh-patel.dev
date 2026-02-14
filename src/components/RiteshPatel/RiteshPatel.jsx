@@ -1,13 +1,95 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  Github,
-  ExternalLink,
-  ArrowUpRight,
-  Linkedin,
-  Mail,
-  Code,
-} from "lucide-react";
+
+// Lucide icons as inline SVG components
+const Github = ({ size = 24, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
+    <path d="M9 18c-4.51 2-5-2-7-2" />
+  </svg>
+);
+
+const Linkedin = ({ size = 24, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect width="4" height="12" x="2" y="9" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
+const ArrowUpRight = ({ size = 24, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <path d="M7 7h10v10" />
+    <path d="M7 17 17 7" />
+  </svg>
+);
+
+const Menu = ({ size = 24, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="18" x2="21" y2="18" />
+  </svg>
+);
+
+const X = ({ size = 24, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
+  </svg>
+);
 
 const skills = {
   Programming: ["Java", "Python", "JavaScript"],
@@ -125,18 +207,14 @@ const GitHubContributionGraph = () => {
   };
 
   return (
-    <section className="w-full bg-black border border-zinc-900 rounded-[32px] p-8 md:p-12 my-20 shadow-2xl overflow-hidden">
+    <section className="w-full bg-black border border-zinc-900 rounded-[32px] p-4 md:p-8 lg:p-12 my-10 md:my-20 shadow-2xl overflow-hidden">
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         @keyframes pulse-glow {
-          0%, 100% {
-            box-shadow: 0 0 5px rgba(0, 255, 162, 0.2);
-          }
-          50% {
-            box-shadow: 0 0 15px rgba(0, 255, 162, 0.5), 0 0 20px rgba(0, 255, 162, 0.2);
-          }
+          0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 162, 0.2); }
+          50% { box-shadow: 0 0 15px rgba(0, 255, 162, 0.5), 0 0 20px rgba(0, 255, 162, 0.2); }
         }
         
         .contribution-box-active {
@@ -144,30 +222,30 @@ const GitHubContributionGraph = () => {
         }
       `}</style>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
-        <div className="flex-1 pr-10">
-          <div className="flex items-center gap-4">
-            <h2 className="text-2xl font-bold uppercase tracking-tighter whitespace-nowrap">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10">
+        <div className="flex-1 pr-4 md:pr-10 mb-4 md:mb-0">
+          <div className="flex items-center gap-2 md:gap-4">
+            <h2 className="text-lg md:text-2xl font-bold uppercase tracking-tighter whitespace-nowrap">
               Commitment to Growth
             </h2>
             <div className="h-[1px] w-full bg-zinc-800" />
           </div>
-          <p className="text-zinc-600 font-mono text-[10px] uppercase tracking-[0.4em] mt-3">
+          <p className="text-zinc-600 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.4em] mt-2 md:mt-3">
             Activity Log / Year 2026
           </p>
         </div>
-        <div className="text-right mt-4 md:mt-0">
-          <span className="text-5xl font-black text-[#34d399] tracking-tighter leading-none">
+        <div className="text-left md:text-right">
+          <span className="text-3xl md:text-5xl font-black text-[#34d399] tracking-tighter leading-none">
             {totalCommits}
           </span>
-          <p className="text-[10px] text-zinc-500 uppercase font-black tracking-widest mt-2">
+          <p className="text-[8px] md:text-[10px] text-zinc-500 uppercase font-black tracking-widest mt-1 md:mt-2">
             Total Contributions
           </p>
         </div>
       </div>
 
-      <div className="relative overflow-x-auto no-scrollbar pb-4 pt-10">
-        <div className="flex gap-1.5 min-w-max">
+      <div className="relative overflow-x-auto no-scrollbar pb-4 pt-6 md:pt-10">
+        <div className="flex gap-1 md:gap-1.5 min-w-max">
           {weeks.map((week, wi) => {
             const firstDayOfMonth = week.find((d) => d.day === 1);
             const showLabel =
@@ -175,10 +253,10 @@ const GitHubContributionGraph = () => {
             return (
               <div
                 key={wi}
-                className="flex flex-col gap-1.5 flex-shrink-0 relative"
+                className="flex flex-col gap-1 md:gap-1.5 flex-shrink-0 relative"
               >
                 {showLabel && (
-                  <span className="absolute -top-8 left-0 text-[10px] font-black text-zinc-500 uppercase tracking-widest">
+                  <span className="absolute -top-6 md:-top-8 left-0 text-[8px] md:text-[10px] font-black text-zinc-500 uppercase tracking-widest">
                     {showLabel.monthName}
                   </span>
                 )}
@@ -196,13 +274,12 @@ const GitHubContributionGraph = () => {
                       opacity: 1,
                     }}
                     transition={{
-                      // Initial entry delay
                       delay: (wi * 7 + di) * 0.002,
-                      // Continuous scale animation configuration
+                      duration: 0.3,
                       scale:
                         day.level > 0
                           ? {
-                              duration: 2 + Math.random() * 2,
+                              duration: 2 + Math.random(),
                               repeat: Infinity,
                               ease: "easeInOut",
                               delay: Math.random() * 2,
@@ -214,7 +291,7 @@ const GitHubContributionGraph = () => {
                       zIndex: 10,
                       transition: { duration: 0.2 },
                     }}
-                    className={`w-[14px] h-[14px] rounded-[2px] transition-all relative ${
+                    className={`w-[10px] h-[10px] md:w-[14px] md:h-[14px] rounded-[2px] transition-all relative ${
                       day.date !== "empty"
                         ? "hover:ring-2 hover:ring-white/50 cursor-crosshair"
                         : "opacity-10"
@@ -224,18 +301,15 @@ const GitHubContributionGraph = () => {
                         day.date === "empty" ? "#111" : getColor(day.level),
                     }}
                   >
-                    {/* Inner glow for active boxes - now active for all contribution levels */}
                     {day.level > 0 && (
                       <motion.div
                         className="absolute inset-0 rounded-[2px]"
-                        animate={{
-                          opacity: [0.2, 0.7, 0.2],
-                        }}
+                        animate={{ opacity: [0.2, 0.7, 0.2] }}
                         transition={{
                           duration: 2.5 + Math.random(),
                           repeat: Infinity,
                           ease: "easeInOut",
-                          delay: Math.random() * 3,
+                          delay: Math.random() * 2,
                         }}
                         style={{
                           background: `radial-gradient(circle, ${getColor(day.level)} 0%, transparent 80%)`,
@@ -256,20 +330,22 @@ const GitHubContributionGraph = () => {
             initial={{ opacity: 0, y: 10, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
-            className="fixed z-[100] bg-white text-black px-4 py-2 rounded-lg shadow-2xl pointer-events-none border border-zinc-200"
+            className="fixed z-[100] bg-white text-black px-3 py-2 rounded-lg shadow-2xl pointer-events-none border border-zinc-200"
             style={{
               left: Math.min(
                 hoverData.x + 20,
-                typeof window !== "undefined" ? window.innerWidth - 180 : 800,
+                (typeof window !== "undefined" ? window.innerWidth : 800) - 180,
               ),
               top: hoverData.y - 60,
             }}
           >
-            <p className="text-[10px] font-black uppercase text-zinc-400">
+            <p className="text-[8px] md:text-[10px] font-black uppercase text-zinc-400">
               Activity Report
             </p>
-            <p className="text-sm font-black">{hoverData.count} Commits</p>
-            <p className="text-[10px] opacity-60 font-medium">
+            <p className="text-xs md:text-sm font-black">
+              {hoverData.count} Commits
+            </p>
+            <p className="text-[8px] md:text-[10px] opacity-60 font-medium">
               {hoverData.date}
             </p>
           </motion.div>
@@ -279,18 +355,15 @@ const GitHubContributionGraph = () => {
   );
 };
 
-// Animated background particles
 const AnimatedBackground = () => {
   const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 });
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       setDimensions({ width: window.innerWidth, height: window.innerHeight });
-
       const handleResize = () => {
         setDimensions({ width: window.innerWidth, height: window.innerHeight });
       };
-
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }
@@ -325,6 +398,7 @@ const AnimatedBackground = () => {
 
 export default function Portfolio() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -335,22 +409,24 @@ export default function Portfolio() {
   }, []);
 
   return (
-    <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black">
+    <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black overflow-x-hidden">
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-[100] border-b border-zinc-900 bg-black/80 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-xl font-black tracking-tighter uppercase"
+            className="text-base md:text-xl font-black tracking-tighter uppercase"
           >
             RITESH<span className="text-zinc-600">PATEL</span>
           </motion.div>
+
+          {/* Desktop Menu */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="hidden md:flex gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500"
+            className="hidden md:flex gap-6 lg:gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500"
           >
             {["About", "Projects", "Skills", "Contact"].map((t, i) => (
               <motion.a
@@ -366,11 +442,13 @@ export default function Portfolio() {
               </motion.a>
             ))}
           </motion.div>
+
+          {/* Social Icons */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex gap-4"
+            className="hidden md:flex gap-4"
           >
             <motion.div whileHover={{ scale: 1.2, rotate: 5 }}>
               <Linkedin
@@ -385,33 +463,71 @@ export default function Portfolio() {
               />
             </motion.div>
           </motion.div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white p-2"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-black border-t border-zinc-900"
+            >
+              <div className="px-4 py-6 space-y-4">
+                {["About", "Projects", "Skills", "Contact"].map((t) => (
+                  <a
+                    key={t}
+                    href={`#${t.toLowerCase()}`}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block text-sm font-bold uppercase tracking-wider text-zinc-400 hover:text-white transition-colors py-2"
+                  >
+                    {t}
+                  </a>
+                ))}
+                <div className="flex gap-6 pt-4 border-t border-zinc-800">
+                  <Linkedin
+                    size={20}
+                    className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                  />
+                  <Github
+                    size={20}
+                    className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6">
-        {/* Hero Section - Centered and Animated */}
+      <main className="max-w-6xl mx-auto px-4 md:px-6">
+        {/* Hero Section */}
         <section
           id="about"
-          className="min-h-screen flex items-center justify-center relative"
+          className="min-h-screen flex items-center justify-center relative pt-16 md:pt-0"
         >
           <AnimatedBackground />
-
-          {/* Spotlight effect following mouse */}
           <motion.div
             className="absolute w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"
-            animate={{
-              x: mousePosition.x - 192,
-              y: mousePosition.y - 192,
-            }}
+            animate={{ x: mousePosition.x - 192, y: mousePosition.y - 192 }}
             transition={{ type: "spring", damping: 30, stiffness: 200 }}
           />
 
-          <div className="text-center relative z-10">
+          <div className="text-center relative z-10 px-4">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-zinc-500 font-mono mb-6 block tracking-widest uppercase text-sm"
+              className="text-zinc-500 font-mono mb-4 md:mb-6 block tracking-widest uppercase text-xs md:text-sm"
             >
               Full Stack & ML Enthusiast
             </motion.span>
@@ -421,7 +537,7 @@ export default function Portfolio() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <h1 className="text-7xl md:text-[140px] lg:text-[180px] font-black tracking-tighter leading-[0.85] mb-8 uppercase">
+              <h1 className="text-5xl sm:text-7xl md:text-[140px] lg:text-[180px] font-black tracking-tighter leading-[0.85] mb-6 md:mb-8 uppercase">
                 <motion.span
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -445,7 +561,7 @@ export default function Portfolio() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto font-medium leading-relaxed mb-12"
+              className="text-base md:text-xl lg:text-2xl text-zinc-400 max-w-3xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4"
             >
               <span className="text-white">Third-year</span> CS student at{" "}
               <span className="text-white">KIET</span> focused on the
@@ -458,7 +574,7 @@ export default function Portfolio() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="flex gap-6 justify-center"
+              className="flex gap-4 md:gap-6 justify-center"
             >
               <a href="#projects">
                 <motion.button
@@ -467,14 +583,14 @@ export default function Portfolio() {
                     boxShadow: "0 0 30px rgba(16, 185, 129, 0.3)",
                   }}
                   whileTap={{ scale: 0.95 }}
-                  className="bg-white cursor-pointer text-black px-10 py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-3 group text-lg"
+                  className="bg-white cursor-pointer text-black px-6 md:px-10 py-3 md:py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 md:gap-3 text-sm md:text-lg"
                 >
                   VIEW PROJECTS
                   <motion.div
                     animate={{ x: [0, 5, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   >
-                    <ArrowUpRight size={24} />
+                    <ArrowUpRight size={20} className="md:w-6 md:h-6" />
                   </motion.div>
                 </motion.button>
               </a>
@@ -485,9 +601,9 @@ export default function Portfolio() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: [0, 10, 0] }}
               transition={{ duration: 2, delay: 1.2, repeat: Infinity }}
-              className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+              className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 hidden md:flex"
             >
-              <div className="w-6 h-10 border-2 border-zinc-700 rounded-full flex justify-center pt-2">
+              <div className="w-5 h-8 md:w-6 md:h-10 border-2 border-zinc-700 rounded-full flex justify-center pt-2">
                 <div className="w-1 h-2 bg-zinc-700 rounded-full" />
               </div>
             </motion.div>
@@ -497,35 +613,35 @@ export default function Portfolio() {
         <GitHubContributionGraph />
 
         {/* PROJECTS SECTION */}
-        <section id="projects" className="mb-32">
+        <section id="projects" className="mb-20 md:mb-32">
           <motion.h2
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="text-sm text-zinc-500 font-mono mb-12 tracking-widest uppercase"
+            className="text-xs md:text-sm text-zinc-500 font-mono mb-8 md:mb-12 tracking-widest uppercase"
           >
             Selected Work
           </motion.h2>
-          <div className="grid grid-cols-1 gap-12">
+          <div className="grid grid-cols-1 gap-8 md:gap-12">
             <motion.div
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               whileHover={{ y: -10 }}
-              className="group relative border-l border-zinc-800 pl-8 py-4 hover:border-white transition-colors"
+              className="group relative border-l border-zinc-800 pl-4 md:pl-8 py-4 hover:border-white transition-colors"
             >
-              <span className="text-xs text-zinc-500 font-mono mb-2 block">
+              <span className="text-[10px] md:text-xs text-zinc-500 font-mono mb-2 block">
                 01 / MACHINE LEARNING
               </span>
-              <h3 className="text-3xl font-bold mb-4 group-hover:text-zinc-300 transition-colors">
+              <h3 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 group-hover:text-zinc-300 transition-colors">
                 Image-Based Medicinal Plant Classifier
               </h3>
-              <p className="text-zinc-400 max-w-2xl mb-6">
+              <p className="text-sm md:text-base text-zinc-400 max-w-2xl mb-4 md:mb-6">
                 A high-precision tool classifying 120+ medicinal plant species.
                 Integrating a custom CNN architecture with a MERN stack
                 dashboard for real-world Ayurvedic raw material authentication.
               </p>
-              <div className="flex gap-3 flex-wrap">
+              <div className="flex gap-2 md:gap-3 flex-wrap">
                 {["Python", "TensorFlow", "React", "Computer Vision"].map(
                   (t, i) => (
                     <motion.span
@@ -535,7 +651,7 @@ export default function Portfolio() {
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1 }}
                       whileHover={{ scale: 1.1 }}
-                      className="text-[10px] border border-zinc-800 px-3 py-1 rounded-full uppercase tracking-widest text-zinc-500 font-bold"
+                      className="text-[8px] md:text-[10px] border border-zinc-800 px-2 md:px-3 py-1 rounded-full uppercase tracking-widest text-zinc-500 font-bold"
                     >
                       {t}
                     </motion.span>
@@ -547,17 +663,17 @@ export default function Portfolio() {
         </section>
 
         {/* SKILLS & EDUCATION GRID */}
-        <div className="grid md:grid-cols-2 gap-20 mb-32">
+        <div className="grid md:grid-cols-2 gap-12 md:gap-20 mb-20 md:mb-32">
           <section id="skills">
             <motion.h2
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="text-sm text-zinc-500 font-mono mb-8 tracking-widest uppercase"
+              className="text-xs md:text-sm text-zinc-500 font-mono mb-6 md:mb-8 tracking-widest uppercase"
             >
               Expertise
             </motion.h2>
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               {Object.entries(skills).map(([cat, items], catIndex) => (
                 <motion.div
                   key={cat}
@@ -566,7 +682,7 @@ export default function Portfolio() {
                   viewport={{ once: true }}
                   transition={{ delay: catIndex * 0.1 }}
                 >
-                  <h4 className="text-zinc-500 text-xs uppercase mb-3 font-bold">
+                  <h4 className="text-zinc-500 text-[10px] md:text-xs uppercase mb-2 md:mb-3 font-bold">
                     {cat}
                   </h4>
                   <div className="flex flex-wrap gap-2">
@@ -578,7 +694,7 @@ export default function Portfolio() {
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.05 }}
                         whileHover={{ scale: 1.1, color: "#10b981" }}
-                        className="text-lg font-medium border-b border-transparent hover:border-white transition-all cursor-default"
+                        className="text-base md:text-lg font-medium border-b border-transparent hover:border-white transition-all cursor-default"
                       >
                         {skill}
                       </motion.span>
@@ -594,11 +710,11 @@ export default function Portfolio() {
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="text-sm text-zinc-500 font-mono mb-8 tracking-widest uppercase"
+              className="text-xs md:text-sm text-zinc-500 font-mono mb-6 md:mb-8 tracking-widest uppercase"
             >
               Education
             </motion.h2>
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               {education.map((edu, idx) => (
                 <motion.div
                   key={idx}
@@ -607,15 +723,19 @@ export default function Portfolio() {
                   viewport={{ once: true }}
                   transition={{ delay: idx * 0.2 }}
                   whileHover={{ x: 10 }}
-                  className="relative pl-6 border-l border-zinc-800"
+                  className="relative pl-4 md:pl-6 border-l border-zinc-800"
                 >
                   <div className="absolute left-[-5px] top-0 w-2 h-2 bg-white rounded-full" />
-                  <span className="text-xs text-zinc-500 font-mono">
+                  <span className="text-[10px] md:text-xs text-zinc-500 font-mono">
                     {edu.year}
                   </span>
-                  <h4 className="text-xl font-bold">{edu.degree}</h4>
-                  <p className="text-zinc-400 text-sm">{edu.school}</p>
-                  <p className="text-white font-mono mt-2">{edu.score}</p>
+                  <h4 className="text-lg md:text-xl font-bold">{edu.degree}</h4>
+                  <p className="text-zinc-400 text-xs md:text-sm">
+                    {edu.school}
+                  </p>
+                  <p className="text-white font-mono text-sm md:text-base mt-1 md:mt-2">
+                    {edu.score}
+                  </p>
                 </motion.div>
               ))}
             </div>
@@ -623,18 +743,21 @@ export default function Portfolio() {
         </div>
 
         {/* CONTACT SECTION */}
-        <section id="contact" className="py-32 border-t border-zinc-900">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12">
+        <section
+          id="contact"
+          className="py-20 md:py-32 border-t border-zinc-900"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               className="md:w-1/2"
             >
-              <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-8">
+              <h2 className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-6 md:mb-8">
                 Let's <br /> Connect
               </h2>
-              <p className="text-zinc-500 italic max-w-xs leading-relaxed">
+              <p className="text-zinc-500 italic max-w-xs leading-relaxed text-sm md:text-base">
                 Currently open for 2026/27 internships.
               </p>
             </motion.div>
@@ -646,12 +769,12 @@ export default function Portfolio() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.2 }}
                 whileHover={{ scale: 1.02 }}
-                className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-8 hover:border-white transition-colors cursor-pointer group"
+                className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-6 md:pb-8 hover:border-white transition-colors cursor-pointer group"
               >
-                <span className="text-zinc-600 font-mono text-[10px] uppercase tracking-[0.3em]">
+                <span className="text-zinc-600 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3em] mb-2 md:mb-0">
                   Email
                 </span>
-                <span className="text-2xl md:text-3xl font-black text-white group-hover:text-emerald-400 transition-colors">
+                <span className="text-lg md:text-2xl lg:text-3xl font-black text-white group-hover:text-emerald-400 transition-colors break-all">
                   riteshpatel1884@gmail.com
                 </span>
               </motion.div>
@@ -661,12 +784,12 @@ export default function Portfolio() {
                 viewport={{ once: true }}
                 transition={{ delay: 0.4 }}
                 whileHover={{ scale: 1.02 }}
-                className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-8 pt-8 hover:border-white transition-colors cursor-pointer group"
+                className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-6 md:pb-8 pt-6 md:pt-8 hover:border-white transition-colors cursor-pointer group"
               >
-                <span className="text-zinc-600 font-mono text-[10px] uppercase tracking-[0.3em]">
+                <span className="text-zinc-600 font-mono text-[8px] md:text-[10px] uppercase tracking-[0.3em] mb-2 md:mb-0">
                   Phone
                 </span>
-                <span className="text-2xl md:text-3xl font-black text-white group-hover:text-emerald-400 transition-colors">
+                <span className="text-lg md:text-2xl lg:text-3xl font-black text-white group-hover:text-emerald-400 transition-colors">
                   +91 8858295418
                 </span>
               </motion.div>
@@ -679,7 +802,7 @@ export default function Portfolio() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        className="max-w-6xl mx-auto px-6 py-10 flex justify-between text-[10px] font-black uppercase tracking-[0.4em] text-zinc-700"
+        className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-10 flex flex-col md:flex-row justify-between text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-zinc-700 gap-2 md:gap-0"
       >
         <span>© Ritesh Patel — 2026</span>
         <span>Ghaziabad, India</span>
