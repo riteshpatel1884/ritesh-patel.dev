@@ -129,6 +129,19 @@ const GitHubContributionGraph = () => {
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes pulse-glow {
+          0%, 100% {
+            box-shadow: 0 0 5px rgba(0, 255, 162, 0.3);
+          }
+          50% {
+            box-shadow: 0 0 15px rgba(0, 255, 162, 0.6), 0 0 25px rgba(0, 255, 162, 0.3);
+          }
+        }
+        
+        .contribution-box-active {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
       `}</style>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10">
@@ -177,12 +190,49 @@ const GitHubContributionGraph = () => {
                       setHoverData({ ...day, x: e.clientX, y: e.clientY })
                     }
                     onMouseLeave={() => setHoverData(null)}
-                    className={`w-[14px] h-[14px] rounded-[2px] transition-all ${day.date !== "empty" ? "hover:ring-2 hover:ring-white/50 cursor-crosshair" : "opacity-10"}`}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{
+                      scale: 1,
+                      opacity: 1,
+                    }}
+                    transition={{
+                      delay: (wi * 7 + di) * 0.002,
+                      duration: 0.3,
+                    }}
+                    whileHover={{
+                      scale: 1.3,
+                      zIndex: 10,
+                      transition: { duration: 0.2 },
+                    }}
+                    className={`w-[14px] h-[14px] rounded-[2px] transition-all ${
+                      day.date !== "empty"
+                        ? "hover:ring-2 hover:ring-white/50 cursor-crosshair"
+                        : "opacity-10"
+                    } ${day.level >= 2 ? "contribution-box-active" : ""}`}
                     style={{
                       backgroundColor:
                         day.date === "empty" ? "#111" : getColor(day.level),
                     }}
-                  />
+                  >
+                    {/* Inner glow for active boxes */}
+                    {day.level >= 3 && (
+                      <motion.div
+                        className="absolute inset-0 rounded-[2px]"
+                        animate={{
+                          opacity: [0.3, 0.8, 0.3],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                          delay: Math.random() * 2,
+                        }}
+                        style={{
+                          background: `radial-gradient(circle, ${getColor(day.level)} 0%, transparent 70%)`,
+                        }}
+                      />
+                    )}
+                  </motion.div>
                 ))}
               </div>
             );
@@ -193,9 +243,9 @@ const GitHubContributionGraph = () => {
       <AnimatePresence>
         {hoverData && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             className="fixed z-[100] bg-white text-black px-4 py-2 rounded-lg shadow-2xl pointer-events-none border border-zinc-200"
             style={{
               left: Math.min(hoverData.x + 20, window.innerWidth - 180),
@@ -225,12 +275,20 @@ const AnimatedBackground = () => {
           key={i}
           className="absolute w-1 h-1 bg-emerald-500/20 rounded-full"
           initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            x:
+              Math.random() *
+              (typeof window !== "undefined" ? window.innerWidth : 1000),
+            y:
+              Math.random() *
+              (typeof window !== "undefined" ? window.innerHeight : 1000),
           }}
           animate={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * window.innerHeight,
+            x:
+              Math.random() *
+              (typeof window !== "undefined" ? window.innerWidth : 1000),
+            y:
+              Math.random() *
+              (typeof window !== "undefined" ? window.innerHeight : 1000),
             scale: [1, 1.5, 1],
             opacity: [0.2, 0.5, 0.2],
           }}
