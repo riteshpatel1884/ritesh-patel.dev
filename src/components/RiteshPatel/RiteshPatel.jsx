@@ -30,11 +30,8 @@ const education = [
     score: "84%",
   },
 ];
+
 const MANUAL_COMMIT_DATA = {
-  // 1 = 1
-  // 2-5 = 2
-  // 6-9 = 3
-  // 10 = 4
   "2026-01-01": { count: 11, level: 4 },
   "2026-01-02": { count: 1, level: 1 },
   "2026-01-03": { count: 3, level: 2 },
@@ -129,7 +126,6 @@ const GitHubContributionGraph = () => {
 
   return (
     <section className="w-full bg-black border border-zinc-900 rounded-[32px] p-8 md:p-12 my-20 shadow-2xl overflow-hidden">
-      {/* Injecting CSS to hide scrollbars globally */}
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -144,7 +140,7 @@ const GitHubContributionGraph = () => {
             <div className="h-[1px] w-full bg-zinc-800" />
           </div>
           <p className="text-zinc-600 font-mono text-[10px] uppercase tracking-[0.4em] mt-3">
-            Manual Activity Log / Year 2026
+            Activity Log / Year 2026
           </p>
         </div>
         <div className="text-right mt-4 md:mt-0">
@@ -220,84 +216,223 @@ const GitHubContributionGraph = () => {
   );
 };
 
+// Animated background particles
+const AnimatedBackground = () => {
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute w-1 h-1 bg-emerald-500/20 rounded-full"
+          initial={{
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+          }}
+          animate={{
+            x: Math.random() * window.innerWidth,
+            y: Math.random() * window.innerHeight,
+            scale: [1, 1.5, 1],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{
+            duration: Math.random() * 10 + 10,
+            repeat: Infinity,
+            ease: "linear",
+          }}
+        />
+      ))}
+    </div>
+  );
+};
+
 export default function Portfolio() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
   return (
     <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black">
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-[100] border-b border-zinc-900 bg-black/80 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="text-xl font-black tracking-tighter uppercase">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="text-xl font-black tracking-tighter uppercase"
+          >
             RITESH<span className="text-zinc-600">PATEL</span>
-          </div>
-          <div className="hidden md:flex gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">
-            {["About", "Projects", "Skills", "Contact"].map((t) => (
-              <a
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="hidden md:flex gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500"
+          >
+            {["About", "Projects", "Skills", "Contact"].map((t, i) => (
+              <motion.a
                 key={t}
                 href={`#${t.toLowerCase()}`}
                 className="hover:text-white transition-colors uppercase"
+                whileHover={{ scale: 1.1 }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * i }}
               >
                 {t}
-              </a>
+              </motion.a>
             ))}
-          </div>
-          <div className="flex gap-4">
-            <Linkedin
-              size={18}
-              className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
-            />
-            <Github
-              size={18}
-              className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
-            />
-          </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex gap-4"
+          >
+            <motion.div whileHover={{ scale: 1.2, rotate: 5 }}>
+              <Linkedin
+                size={18}
+                className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
+              />
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.2, rotate: -5 }}>
+              <Github
+                size={18}
+                className="text-zinc-500 hover:text-white transition-colors cursor-pointer"
+              />
+            </motion.div>
+          </motion.div>
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-6 pt-44 pb-20">
-        {/* Hero Section */}
-        <section id="about" className="mb-40">
+      <main className="max-w-6xl mx-auto px-6">
+        {/* Hero Section - Centered and Animated */}
+        <section
+          id="about"
+          className="min-h-screen flex items-center justify-center relative"
+        >
+          <AnimatedBackground />
+
+          {/* Spotlight effect following mouse */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            {" "}
-            <span className="text-zinc-500 font-mono mb-4 block tracking-widest uppercase">
+            className="absolute w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"
+            animate={{
+              x: mousePosition.x - 192,
+              y: mousePosition.y - 192,
+            }}
+            transition={{ type: "spring", damping: 30, stiffness: 200 }}
+          />
+
+          <div className="text-center relative z-10">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-zinc-500 font-mono mb-6 block tracking-widest uppercase text-sm"
+            >
               Full Stack & ML Enthusiast
-            </span>
-            <h1 className="text-7xl md:text-[140px] font-black tracking-tighter leading-[0.8] mb-12 uppercase">
-              Building <br /> <span className="text-zinc-800">Future.</span>
-            </h1>
-            <p className="text-xl text-zinc-400 max-w-2xl font-medium leading-relaxed">
+            </motion.span>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 0.2 }}
+            >
+              <h1 className="text-7xl md:text-[140px] lg:text-[180px] font-black tracking-tighter leading-[0.85] mb-8 uppercase">
+                <motion.span
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
+                  className="block"
+                >
+                  BUILDING
+                </motion.span>
+                <motion.span
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.5 }}
+                  className="block text-zinc-800"
+                >
+                  FUTURE.
+                </motion.span>
+              </h1>
+            </motion.div>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+              className="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto font-medium leading-relaxed mb-12"
+            >
               <span className="text-white">Third-year</span> CS student at{" "}
               <span className="text-white">KIET</span> focused on the
               intersection of{" "}
               <span className="text-white">Machine Learning</span> and{" "}
               <span className="text-white">Full-Stack Engineering</span>
-            </p>
-            <div className="flex gap-6 mt-10">
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
+              className="flex gap-6 justify-center"
+            >
               <a href="#projects">
-                <button className="bg-white cursor-pointer text-black px-8 py-4 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 group">
-                  VIEW PROJECTS{" "}
-                  <ArrowUpRight
-                    size={20}
-                    className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
-                  />
-                </button>
+                <motion.button
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: "0 0 30px rgba(16, 185, 129, 0.3)",
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white cursor-pointer text-black px-10 py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-3 group text-lg"
+                >
+                  VIEW PROJECTS
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <ArrowUpRight size={24} />
+                  </motion.div>
+                </motion.button>
               </a>
-            </div>
-          </motion.div>
+            </motion.div>
+
+            {/* Scroll indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, y: [0, 10, 0] }}
+              transition={{ duration: 2, delay: 1.2, repeat: Infinity }}
+              className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
+            >
+              <div className="w-6 h-10 border-2 border-zinc-700 rounded-full flex justify-center pt-2">
+                <div className="w-1 h-2 bg-zinc-700 rounded-full" />
+              </div>
+            </motion.div>
+          </div>
         </section>
 
         <GitHubContributionGraph />
 
         {/* PROJECTS SECTION */}
         <section id="projects" className="mb-32">
-          <h2 className="text-sm text-zinc-500 font-mono mb-12 tracking-widest uppercase">
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="text-sm text-zinc-500 font-mono mb-12 tracking-widest uppercase"
+          >
             Selected Work
-          </h2>
+          </motion.h2>
           <div className="grid grid-cols-1 gap-12">
             <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               whileHover={{ y: -10 }}
               className="group relative border-l border-zinc-800 pl-8 py-4 hover:border-white transition-colors"
             >
@@ -314,13 +449,18 @@ export default function Portfolio() {
               </p>
               <div className="flex gap-3 flex-wrap">
                 {["Python", "TensorFlow", "React", "Computer Vision"].map(
-                  (t) => (
-                    <span
+                  (t, i) => (
+                    <motion.span
                       key={t}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }}
+                      whileHover={{ scale: 1.1 }}
                       className="text-[10px] border border-zinc-800 px-3 py-1 rounded-full uppercase tracking-widest text-zinc-500 font-bold"
                     >
                       {t}
-                    </span>
+                    </motion.span>
                   ),
                 )}
               </div>
@@ -331,38 +471,64 @@ export default function Portfolio() {
         {/* SKILLS & EDUCATION GRID */}
         <div className="grid md:grid-cols-2 gap-20 mb-32">
           <section id="skills">
-            <h2 className="text-sm text-zinc-500 font-mono mb-8 tracking-widest uppercase">
+            <motion.h2
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="text-sm text-zinc-500 font-mono mb-8 tracking-widest uppercase"
+            >
               Expertise
-            </h2>
+            </motion.h2>
             <div className="space-y-8">
-              {Object.entries(skills).map(([cat, items]) => (
-                <div key={cat}>
-                  <h4 className="text-zinc-500 text-xs uppercase mb-3 font-bold ">
+              {Object.entries(skills).map(([cat, items], catIndex) => (
+                <motion.div
+                  key={cat}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: catIndex * 0.1 }}
+                >
+                  <h4 className="text-zinc-500 text-xs uppercase mb-3 font-bold">
                     {cat}
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    {items.map((skill) => (
-                      <span
+                    {items.map((skill, i) => (
+                      <motion.span
                         key={skill}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: i * 0.05 }}
+                        whileHover={{ scale: 1.1, color: "#10b981" }}
                         className="text-lg font-medium border-b border-transparent hover:border-white transition-all cursor-default"
                       >
                         {skill}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
           </section>
 
           <section id="education">
-            <h2 className="text-sm text-zinc-500 font-mono mb-8 tracking-widest uppercase">
+            <motion.h2
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="text-sm text-zinc-500 font-mono mb-8 tracking-widest uppercase"
+            >
               Education
-            </h2>
+            </motion.h2>
             <div className="space-y-8">
               {education.map((edu, idx) => (
-                <div
+                <motion.div
                   key={idx}
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.2 }}
+                  whileHover={{ x: 10 }}
                   className="relative pl-6 border-l border-zinc-800"
                 >
                   <div className="absolute left-[-5px] top-0 w-2 h-2 bg-white rounded-full" />
@@ -372,50 +538,74 @@ export default function Portfolio() {
                   <h4 className="text-xl font-bold">{edu.degree}</h4>
                   <p className="text-zinc-400 text-sm">{edu.school}</p>
                   <p className="text-white font-mono mt-2">{edu.score}</p>
-                </div>
+                </motion.div>
               ))}
             </div>
           </section>
         </div>
 
-        {/* --- IMAGE 3: LET'S CONNECT --- */}
+        {/* CONTACT SECTION */}
         <section id="contact" className="py-32 border-t border-zinc-900">
           <div className="flex flex-col md:flex-row justify-between items-start gap-12">
-            <div className="md:w-1/2">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="md:w-1/2"
+            >
               <h2 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-8">
                 Let's <br /> Connect
               </h2>
               <p className="text-zinc-500 italic max-w-xs leading-relaxed">
                 Currently open for 2026/27 internships.
               </p>
-            </div>
+            </motion.div>
 
             <div className="md:w-1/2 w-full space-y-4">
-              <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-8 hover:border-white transition-colors cursor-pointer group">
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                whileHover={{ scale: 1.02 }}
+                className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-8 hover:border-white transition-colors cursor-pointer group"
+              >
                 <span className="text-zinc-600 font-mono text-[10px] uppercase tracking-[0.3em]">
                   Email
                 </span>
                 <span className="text-2xl md:text-3xl font-black text-white group-hover:text-emerald-400 transition-colors">
                   riteshpatel1884@gmail.com
                 </span>
-              </div>
-              <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-8 pt-8 hover:border-white transition-colors cursor-pointer group">
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.4 }}
+                whileHover={{ scale: 1.02 }}
+                className="flex flex-col md:flex-row md:items-center justify-between border-b border-zinc-900 pb-8 pt-8 hover:border-white transition-colors cursor-pointer group"
+              >
                 <span className="text-zinc-600 font-mono text-[10px] uppercase tracking-[0.3em]">
                   Phone
                 </span>
                 <span className="text-2xl md:text-3xl font-black text-white group-hover:text-emerald-400 transition-colors">
                   +91 8858295418
                 </span>
-              </div>
+              </motion.div>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="max-w-6xl mx-auto px-6 py-10 flex justify-between text-[10px] font-black uppercase tracking-[0.4em] text-zinc-700">
+      <motion.footer
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        className="max-w-6xl mx-auto px-6 py-10 flex justify-between text-[10px] font-black uppercase tracking-[0.4em] text-zinc-700"
+      >
         <span>© Ritesh Patel — 2026</span>
         <span>Ghaziabad, India</span>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
