@@ -1,7 +1,6 @@
 import React from "react";
 import RiteshPatel from "./components/RiteshPatel/RiteshPatel";
-import Portfolio from "./components/RiteshPatel/code";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react";
 function App() {
   return (
     <>

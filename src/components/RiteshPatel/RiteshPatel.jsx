@@ -132,15 +132,15 @@ const GitHubContributionGraph = () => {
         
         @keyframes pulse-glow {
           0%, 100% {
-            box-shadow: 0 0 5px rgba(0, 255, 162, 0.3);
+            box-shadow: 0 0 5px rgba(0, 255, 162, 0.2);
           }
           50% {
-            box-shadow: 0 0 15px rgba(0, 255, 162, 0.6), 0 0 25px rgba(0, 255, 162, 0.3);
+            box-shadow: 0 0 15px rgba(0, 255, 162, 0.5), 0 0 20px rgba(0, 255, 162, 0.2);
           }
         }
         
         .contribution-box-active {
-          animation: pulse-glow 2s ease-in-out infinite;
+          animation: pulse-glow 3s ease-in-out infinite;
         }
       `}</style>
 
@@ -171,7 +171,7 @@ const GitHubContributionGraph = () => {
           {weeks.map((week, wi) => {
             const firstDayOfMonth = week.find((d) => d.day === 1);
             const showLabel =
-              firstDayOfMonth || (wi === 0 && week[3].month === 0);
+              firstDayOfMonth || (wi === 0 && week[3] && week[3].month === 0);
             return (
               <div
                 key={wi}
@@ -192,43 +192,53 @@ const GitHubContributionGraph = () => {
                     onMouseLeave={() => setHoverData(null)}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{
-                      scale: 1,
+                      scale: day.level > 0 ? [1, 1.05, 1] : 1,
                       opacity: 1,
                     }}
                     transition={{
+                      // Initial entry delay
                       delay: (wi * 7 + di) * 0.002,
-                      duration: 0.3,
+                      // Continuous scale animation configuration
+                      scale:
+                        day.level > 0
+                          ? {
+                              duration: 2 + Math.random() * 2,
+                              repeat: Infinity,
+                              ease: "easeInOut",
+                              delay: Math.random() * 2,
+                            }
+                          : { duration: 0.3 },
                     }}
                     whileHover={{
                       scale: 1.3,
                       zIndex: 10,
                       transition: { duration: 0.2 },
                     }}
-                    className={`w-[14px] h-[14px] rounded-[2px] transition-all ${
+                    className={`w-[14px] h-[14px] rounded-[2px] transition-all relative ${
                       day.date !== "empty"
                         ? "hover:ring-2 hover:ring-white/50 cursor-crosshair"
                         : "opacity-10"
-                    } ${day.level >= 2 ? "contribution-box-active" : ""}`}
+                    } ${day.level > 0 ? "contribution-box-active" : ""}`}
                     style={{
                       backgroundColor:
                         day.date === "empty" ? "#111" : getColor(day.level),
                     }}
                   >
-                    {/* Inner glow for active boxes */}
-                    {day.level >= 3 && (
+                    {/* Inner glow for active boxes - now active for all contribution levels */}
+                    {day.level > 0 && (
                       <motion.div
                         className="absolute inset-0 rounded-[2px]"
                         animate={{
-                          opacity: [0.3, 0.8, 0.3],
+                          opacity: [0.2, 0.7, 0.2],
                         }}
                         transition={{
-                          duration: 2,
+                          duration: 2.5 + Math.random(),
                           repeat: Infinity,
                           ease: "easeInOut",
-                          delay: Math.random() * 2,
+                          delay: Math.random() * 3,
                         }}
                         style={{
-                          background: `radial-gradient(circle, ${getColor(day.level)} 0%, transparent 70%)`,
+                          background: `radial-gradient(circle, ${getColor(day.level)} 0%, transparent 80%)`,
                         }}
                       />
                     )}
@@ -248,7 +258,10 @@ const GitHubContributionGraph = () => {
             exit={{ opacity: 0, scale: 0.9 }}
             className="fixed z-[100] bg-white text-black px-4 py-2 rounded-lg shadow-2xl pointer-events-none border border-zinc-200"
             style={{
-              left: Math.min(hoverData.x + 20, window.innerWidth - 180),
+              left: Math.min(
+                hoverData.x + 20,
+                typeof window !== "undefined" ? window.innerWidth - 180 : 800,
+              ),
               top: hoverData.y - 60,
             }}
           >
@@ -268,6 +281,21 @@ const GitHubContributionGraph = () => {
 
 // Animated background particles
 const AnimatedBackground = () => {
+  const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setDimensions({ width: window.innerWidth, height: window.innerHeight });
+
+      const handleResize = () => {
+        setDimensions({ width: window.innerWidth, height: window.innerHeight });
+      };
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
+    }
+  }, []);
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {[...Array(20)].map((_, i) => (
@@ -275,20 +303,12 @@ const AnimatedBackground = () => {
           key={i}
           className="absolute w-1 h-1 bg-emerald-500/20 rounded-full"
           initial={{
-            x:
-              Math.random() *
-              (typeof window !== "undefined" ? window.innerWidth : 1000),
-            y:
-              Math.random() *
-              (typeof window !== "undefined" ? window.innerHeight : 1000),
+            x: Math.random() * dimensions.width,
+            y: Math.random() * dimensions.height,
           }}
           animate={{
-            x:
-              Math.random() *
-              (typeof window !== "undefined" ? window.innerWidth : 1000),
-            y:
-              Math.random() *
-              (typeof window !== "undefined" ? window.innerHeight : 1000),
+            x: Math.random() * dimensions.width,
+            y: Math.random() * dimensions.height,
             scale: [1, 1.5, 1],
             opacity: [0.2, 0.5, 0.2],
           }}
