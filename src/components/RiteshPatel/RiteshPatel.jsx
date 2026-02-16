@@ -145,11 +145,18 @@ const MANUAL_COMMIT_DATA = {
   "2026-02-11": { count: 6, level: 3 },
   "2026-02-12": { count: 12, level: 4 },
   "2026-02-13": { count: 23, level: 4 },
+  "2026-02-14": { count: 13, level: 4 },
+  "2026-02-15": { count: 13, level: 4 },
+  "2026-02-16": { count: 9, level: 3 },
 };
 
 const GitHubContributionGraph = () => {
   const [weeks, setWeeks] = useState([]);
-  const [totalCommits, setTotalCommits] = useState(0);
+  const [stats, setStats] = useState({
+    total: 0,
+    currentStreak: 0,
+    longestStreak: 0,
+  });
   const [hoverData, setHoverData] = useState(null);
 
   useEffect(() => {
@@ -171,6 +178,7 @@ const GitHubContributionGraph = () => {
     const allDays = [];
     let commitSum = 0;
 
+    // 1. Build the calendar data
     for (let i = 0; i < 3; i++) allDays.push({ date: "empty", month: -1 });
 
     for (let month = 0; month < 12; month++) {
@@ -192,13 +200,53 @@ const GitHubContributionGraph = () => {
       }
     }
 
+    // 2. Calculate Streaks logic
+    const activeDates = Object.keys(MANUAL_COMMIT_DATA)
+      .filter((d) => MANUAL_COMMIT_DATA[d].count > 0)
+      .sort((a, b) => new Date(a) - new Date(b));
+
+    let longest = 0;
+    let current = 0;
+    let runningStreak = 0;
+
+    if (activeDates.length > 0) {
+      runningStreak = 1;
+      longest = 1;
+
+      for (let i = 1; i < activeDates.length; i++) {
+        const prev = new Date(activeDates[i - 1]);
+        const curr = new Date(activeDates[i]);
+        const diffDays = (curr - prev) / (1000 * 60 * 60 * 24);
+
+        if (diffDays === 1) {
+          runningStreak++;
+        } else {
+          runningStreak = 1;
+        }
+        if (runningStreak > longest) longest = runningStreak;
+      }
+
+      // Calculate Current Streak based on "Today" (Using last entry as today for demo)
+      const lastCommitDate = new Date(activeDates[activeDates.length - 1]);
+      const today = new Date("2026-02-16"); // Matching the last date in your data
+      const diffFromToday = (today - lastCommitDate) / (1000 * 60 * 60 * 24);
+
+      // If last commit was today or yesterday, streak is still active
+      current = diffFromToday <= 1 ? runningStreak : 0;
+    }
+
+    // 3. Prepare Grid structure
     while (allDays.length % 7 !== 0) allDays.push({ date: "empty", month: -1 });
     const weeksData = [];
     for (let i = 0; i < allDays.length; i += 7)
       weeksData.push(allDays.slice(i, i + 7));
 
     setWeeks(weeksData);
-    setTotalCommits(commitSum);
+    setStats({
+      total: commitSum,
+      currentStreak: current,
+      longestStreak: longest,
+    });
   }, []);
 
   const getColor = (level) => {
@@ -222,8 +270,8 @@ const GitHubContributionGraph = () => {
         }
       `}</style>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10">
-        <div className="flex-1 pr-4 md:pr-10 mb-4 md:mb-0">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-10 gap-6">
+        <div className="flex-1">
           <div className="flex items-center gap-2 md:gap-4">
             <h2 className="text-lg md:text-2xl font-bold uppercase tracking-tighter whitespace-nowrap">
               Commitment to Growth
@@ -234,13 +282,33 @@ const GitHubContributionGraph = () => {
             Activity Log / Year 2026
           </p>
         </div>
-        <div className="text-left md:text-right">
-          <span className="text-3xl md:text-5xl font-black text-[#34d399] tracking-tighter leading-none">
-            {totalCommits}
-          </span>
-          <p className="text-[8px] md:text-[10px] text-zinc-500 uppercase font-black tracking-widest mt-1 md:mt-2">
-            Total Contributions
-          </p>
+
+        {/* Stats Row */}
+        <div className="flex gap-8 md:gap-12 shrink-0">
+          <div className="text-left md:text-right">
+            <span className="text-2xl md:text-4xl font-black text-[#34d399] tracking-tighter leading-none block">
+              {stats.total}
+            </span>
+            <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
+              Total Commits
+            </p>
+          </div>
+          <div className="text-left md:text-right border-l border-zinc-800 pl-8 md:pl-12">
+            <span className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none block">
+              {stats.currentStreak}
+            </span>
+            <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
+              Current Streak
+            </p>
+          </div>
+          <div className="text-left md:text-right border-l border-zinc-800 pl-8 md:pl-12">
+            <span className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none block">
+              {stats.longestStreak}
+            </span>
+            <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
+              Longest Streak
+            </p>
+          </div>
         </div>
       </div>
 
