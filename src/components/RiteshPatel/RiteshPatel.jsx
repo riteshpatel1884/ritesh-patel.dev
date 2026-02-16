@@ -147,7 +147,7 @@ const MANUAL_COMMIT_DATA = {
   "2026-02-13": { count: 23, level: 4 },
   "2026-02-14": { count: 13, level: 4 },
   "2026-02-15": { count: 13, level: 4 },
-  "2026-02-16": { count: 9, level: 3 },
+  "2026-02-16": { count: 11, level: 4 },
 };
 
 const GitHubContributionGraph = () => {
@@ -155,7 +155,9 @@ const GitHubContributionGraph = () => {
   const [stats, setStats] = useState({
     total: 0,
     currentStreak: 0,
+    currentStreakRange: "",
     longestStreak: 0,
+    longestStreakRange: "",
   });
   const [hoverData, setHoverData] = useState(null);
 
@@ -178,7 +180,14 @@ const GitHubContributionGraph = () => {
     const allDays = [];
     let commitSum = 0;
 
-    // 1. Build the calendar data
+    // Helper: Format Date string to "MMM DD"
+    const formatDateLabel = (dateStr) => {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      return `${monthNames[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}`;
+    };
+
+    // 1. Build the calendar grid
     for (let i = 0; i < 3; i++) allDays.push({ date: "empty", month: -1 });
 
     for (let month = 0; month < 12; month++) {
@@ -200,40 +209,84 @@ const GitHubContributionGraph = () => {
       }
     }
 
-    // 2. Calculate Streaks logic
+    // 2. Advanced Streak Logic with Date Ranges
     const activeDates = Object.keys(MANUAL_COMMIT_DATA)
       .filter((d) => MANUAL_COMMIT_DATA[d].count > 0)
       .sort((a, b) => new Date(a) - new Date(b));
 
     let longest = 0;
+    let longestStart = "";
+    let longestEnd = "";
+
     let current = 0;
-    let runningStreak = 0;
+    let currentRangeStr = "No active streak";
 
     if (activeDates.length > 0) {
-      runningStreak = 1;
-      longest = 1;
+      let tempStreak = 1;
+      let tempStart = activeDates[0];
 
+      // Longest Streak Calculation
       for (let i = 1; i < activeDates.length; i++) {
         const prev = new Date(activeDates[i - 1]);
         const curr = new Date(activeDates[i]);
         const diffDays = (curr - prev) / (1000 * 60 * 60 * 24);
 
         if (diffDays === 1) {
-          runningStreak++;
+          tempStreak++;
         } else {
-          runningStreak = 1;
+          // Check if temp was longest before resetting
+          if (tempStreak >= longest) {
+            longest = tempStreak;
+            longestStart = tempStart;
+            longestEnd = activeDates[i - 1];
+          }
+          tempStreak = 1;
+          tempStart = activeDates[i];
         }
-        if (runningStreak > longest) longest = runningStreak;
+      }
+      // Final check for the last running streak in loop
+      if (tempStreak >= longest) {
+        longest = tempStreak;
+        longestStart = tempStart;
+        longestEnd = activeDates[activeDates.length - 1];
       }
 
-      // Calculate Current Streak based on "Today" (Using last entry as today for demo)
+      // Current Streak Calculation
+      const todayReference = new Date("2026-02-16");
       const lastCommitDate = new Date(activeDates[activeDates.length - 1]);
-      const today = new Date("2026-02-16"); // Matching the last date in your data
-      const diffFromToday = (today - lastCommitDate) / (1000 * 60 * 60 * 24);
+      const diffFromToday =
+        (todayReference - lastCommitDate) / (1000 * 60 * 60 * 24);
 
-      // If last commit was today or yesterday, streak is still active
-      current = diffFromToday <= 1 ? runningStreak : 0;
+      if (diffFromToday <= 1) {
+        // Find how far back the current contiguous streak goes
+        let currentStreakCount = 0;
+        let pointer = activeDates.length - 1;
+        let currentStreakStart = activeDates[pointer];
+
+        while (pointer >= 0) {
+          if (pointer === activeDates.length - 1) {
+            currentStreakCount = 1;
+          } else {
+            const nextDate = new Date(activeDates[pointer + 1]);
+            const thisDate = new Date(activeDates[pointer]);
+            if ((nextDate - thisDate) / (1000 * 60 * 60 * 24) === 1) {
+              currentStreakCount++;
+              currentStreakStart = activeDates[pointer];
+            } else {
+              break;
+            }
+          }
+          pointer--;
+        }
+        current = currentStreakCount;
+        currentRangeStr = `${formatDateLabel(currentStreakStart)} — ${formatDateLabel(activeDates[activeDates.length - 1])}`;
+      }
     }
+
+    const longestRangeStr =
+      longest > 0
+        ? `${formatDateLabel(longestStart)} — ${formatDateLabel(longestEnd)}`
+        : "None";
 
     // 3. Prepare Grid structure
     while (allDays.length % 7 !== 0) allDays.push({ date: "empty", month: -1 });
@@ -245,7 +298,9 @@ const GitHubContributionGraph = () => {
     setStats({
       total: commitSum,
       currentStreak: current,
+      currentStreakRange: currentRangeStr,
       longestStreak: longest,
+      longestStreakRange: longestRangeStr,
     });
   }, []);
 
@@ -259,19 +314,15 @@ const GitHubContributionGraph = () => {
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
         @keyframes pulse-glow {
           0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 162, 0.2); }
           50% { box-shadow: 0 0 15px rgba(0, 255, 162, 0.5), 0 0 20px rgba(0, 255, 162, 0.2); }
         }
-        
-        .contribution-box-active {
-          animation: pulse-glow 3s ease-in-out infinite;
-        }
+        .contribution-box-active { animation: pulse-glow 3s ease-in-out infinite; }
       `}</style>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-10 gap-6">
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           <div className="flex items-center gap-2 md:gap-4">
             <h2 className="text-lg md:text-2xl font-bold uppercase tracking-tighter whitespace-nowrap">
               Commitment to Growth
@@ -290,7 +341,7 @@ const GitHubContributionGraph = () => {
               {stats.total}
             </span>
             <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
-              Total Commits
+              Commits
             </p>
           </div>
           <div className="text-left md:text-right border-l border-zinc-800 pl-8 md:pl-12">
@@ -300,6 +351,9 @@ const GitHubContributionGraph = () => {
             <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
               Current Streak
             </p>
+            <p className="text-[6px] md:text-[8px] text-zinc-600 font-mono mt-0.5 uppercase">
+              {stats.currentStreakRange}
+            </p>
           </div>
           <div className="text-left md:text-right border-l border-zinc-800 pl-8 md:pl-12">
             <span className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none block">
@@ -307,6 +361,9 @@ const GitHubContributionGraph = () => {
             </span>
             <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
               Longest Streak
+            </p>
+            <p className="text-[6px] md:text-[8px] text-zinc-600 font-mono mt-0.5 uppercase">
+              {stats.longestStreakRange}
             </p>
           </div>
         </div>
@@ -347,7 +404,7 @@ const GitHubContributionGraph = () => {
                       scale:
                         day.level > 0
                           ? {
-                              duration: 2 + Math.random(),
+                              duration: 2,
                               repeat: Infinity,
                               ease: "easeInOut",
                               delay: Math.random() * 2,
@@ -374,10 +431,9 @@ const GitHubContributionGraph = () => {
                         className="absolute inset-0 rounded-[2px]"
                         animate={{ opacity: [0.2, 0.7, 0.2] }}
                         transition={{
-                          duration: 2.5 + Math.random(),
+                          duration: 2.5,
                           repeat: Infinity,
                           ease: "easeInOut",
-                          delay: Math.random() * 2,
                         }}
                         style={{
                           background: `radial-gradient(circle, ${getColor(day.level)} 0%, transparent 80%)`,
@@ -429,9 +485,8 @@ const AnimatedBackground = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       setDimensions({ width: window.innerWidth, height: window.innerHeight });
-      const handleResize = () => {
+      const handleResize = () =>
         setDimensions({ width: window.innerWidth, height: window.innerHeight });
-      };
       window.addEventListener("resize", handleResize);
       return () => window.removeEventListener("resize", handleResize);
     }
@@ -469,9 +524,8 @@ export default function Portfolio() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e) =>
       setMousePosition({ x: e.clientX, y: e.clientY });
-    };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
@@ -489,7 +543,6 @@ export default function Portfolio() {
             RITESH<span className="text-zinc-600">PATEL</span>
           </motion.div>
 
-          {/* Desktop Menu */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -511,7 +564,6 @@ export default function Portfolio() {
             ))}
           </motion.div>
 
-          {/* Social Icons */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -532,7 +584,6 @@ export default function Portfolio() {
             </motion.div>
           </motion.div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-white p-2"
@@ -541,7 +592,6 @@ export default function Portfolio() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -664,7 +714,6 @@ export default function Portfolio() {
               </a>
             </motion.div>
 
-            {/* Scroll indicator */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: [0, 10, 0] }}
