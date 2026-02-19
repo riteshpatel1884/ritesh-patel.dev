@@ -145,6 +145,11 @@ const MANUAL_COMMIT_DATA = {
   "2026-02-11": { count: 6, level: 3 },
   "2026-02-12": { count: 12, level: 4 },
   "2026-02-13": { count: 23, level: 4 },
+  "2026-02-14": { count: 13, level: 4 },
+  "2026-02-15": { count: 13, level: 4 },
+  "2026-02-16": { count: 9, level: 3 },
+  "2026-02-17": { count: 15, level: 4 },
+  "2026-02-18": { count: 2, level: 1 },
 };
 
 const GitHubContributionGraph = () => {
