@@ -111,6 +111,12 @@ const education = [
     year: "2021 - 2022",
     score: "84%",
   },
+  {
+    degree: "Secondary (12th)",
+    school: "Rani Laxmi Bai School",
+    year: "2019 - 2020",
+    score: "86%",
+  },
 ];
 
 const MANUAL_COMMIT_DATA = {
