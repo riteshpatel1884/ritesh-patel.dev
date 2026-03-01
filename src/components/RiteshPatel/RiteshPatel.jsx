@@ -103,7 +103,7 @@ const education = [
     degree: "B.Tech Computer Science",
     school: "KIET Group of Institutions",
     year: "2023 - 2027",
-    score: "7.39 GPA",
+    score: "7.48 GPA",
   },
   {
     degree: "Higher Secondary (12th)",
