@@ -103,19 +103,13 @@ const education = [
     degree: "B.Tech Computer Science",
     school: "KIET Group of Institutions",
     year: "2023 - 2027",
-    score: "7.48 GPA",
+    score: "7.39 GPA",
   },
   {
     degree: "Higher Secondary (12th)",
     school: "Rani Laxmi Bai School",
     year: "2021 - 2022",
     score: "84%",
-  },
-  {
-    degree: "Secondary (10th)",
-    school: "Rani Laxmi Bai School",
-    year: "2019 - 2020",
-    score: "86%",
   },
 ];
 
@@ -454,6 +448,84 @@ const GitHubContributionGraph = () => {
   );
 };
 
+/* Auto-fits each hero word to exactly fill the container width on mobile */
+const AutoFitHero = () => {
+  const containerRef = React.useRef(null);
+  const [sizes, setSizes] = React.useState({
+    machine: 72,
+    learning: 72,
+    enthusiast: 45,
+  });
+
+  React.useEffect(() => {
+    const measure = () => {
+      if (!containerRef.current) return;
+      const W = containerRef.current.offsetWidth;
+      if (!W) return;
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const fitSize = (text, targetW, startSize = 200) => {
+        let size = startSize;
+        while (size > 8) {
+          ctx.font = `900 ${size}px Arial`;
+          const tw = ctx.measureText(text).width * 0.93; // 0.93 accounts for letter-spacing -0.04em
+          if (tw <= targetW) return size;
+          size -= 1;
+        }
+        return size;
+      };
+
+      setSizes({
+        machine: fitSize("MACHINE", W),
+        learning: fitSize("LEARNING", W),
+        enthusiast: fitSize("ENTHUSIAST.", W),
+      });
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  const words = [
+    { text: "MACHINE", size: sizes.machine, color: "#ffffff", delay: 0.2 },
+    { text: "LEARNING", size: sizes.learning, color: "#ffffff", delay: 0.35 },
+    {
+      text: "ENTHUSIAST.",
+      size: sizes.enthusiast,
+      color: "#3f3f46",
+      delay: 0.5,
+    },
+  ];
+
+  return (
+    <div ref={containerRef} className="md:hidden pb-6 overflow-hidden">
+      {words.map(({ text, size, color, delay }) => (
+        <motion.span
+          key={text}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay }}
+          style={{
+            display: "block",
+            fontSize: `${size}px`,
+            fontWeight: 900,
+            textTransform: "uppercase",
+            letterSpacing: "-0.04em",
+            lineHeight: 0.86,
+            whiteSpace: "nowrap",
+            color,
+          }}
+        >
+          {text}
+        </motion.span>
+      ))}
+    </div>
+  );
+};
+
 export default function Portfolio() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -558,24 +630,71 @@ export default function Portfolio() {
         {/* Hero Section */}
         <section
           id="about"
-          className="min-h-screen flex items-center justify-center relative pt-16 md:pt-0"
+          className="min-h-screen flex flex-col justify-center relative"
+          style={{ paddingTop: "5rem", paddingBottom: "2rem" }}
         >
-          <div className="text-center relative z-10 px-4">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-zinc-500 font-mono mb-4 md:mb-6 block tracking-widest uppercase text-xs md:text-sm"
-            >
-              Full Stack & ML Enthusiast
-            </motion.span>
+          <div className="relative z-10 w-full">
+            <style>{`
+              /* ── MOBILE HERO: full-bleed breakout ── */
+              .hero-mobile {
+                display: block;
+                padding-bottom: 1.5rem;
+              }
+              .hero-mobile .word {
+                display: block;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: -0.04em;
+                line-height: 0.84;
+                white-space: nowrap;
+                /* Scale each word to fill the container width */
+                width: fit-content;
+              }
+              /*
+               * Available width = 100vw - 2*padding(1rem) = calc(100vw - 2rem)
+               * MACHINE   = 7 chars  → ~19vw per char fits at ~0.85 tracking
+               * LEARNING  = 8 chars  → same
+               * ENTHUSIAST. = 11 chars
+               * Use transform scaleX to perfectly fill width
+               */
+              .hero-mobile .w-machine {
+                font-size: clamp(3rem, 18.5vw, 8rem);
+              }
+              .hero-mobile .w-learning {
+                font-size: clamp(3rem, 18.5vw, 8rem);
+              }
+              .hero-mobile .w-enthusiast {
+                font-size: clamp(1.8rem, 11.5vw, 5rem);
+                color: #3f3f46;
+              }
 
+              /* ── DESKTOP ── */
+              .hero-desktop {
+                display: none;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: -0.03em;
+                line-height: 0.85;
+                margin-bottom: 1.5rem;
+                font-size: clamp(8rem, 14vw, 11.25rem);
+              }
+              @media (min-width: 768px) {
+                .hero-mobile  { display: none; }
+                .hero-desktop { display: block; }
+              }
+            `}</style>
+
+            {/* ── MOBILE HERO: JS auto-fit ── */}
+            <AutoFitHero />
+
+            {/* ── DESKTOP HERO ── */}
             <motion.div
+              className="hidden md:block"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <h1 className="text-5xl sm:text-7xl md:text-[140px] lg:text-[180px] font-black tracking-tighter leading-[0.85] mb-6 md:mb-8 uppercase">
+              <h1 className="hero-desktop text-center">
                 <motion.span
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -599,7 +718,7 @@ export default function Portfolio() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-base md:text-xl lg:text-2xl text-zinc-400 max-w-3xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4"
+              className="text-sm md:text-xl lg:text-2xl text-zinc-400 max-w-3xl md:mx-auto font-medium leading-relaxed mb-8 md:mb-12 md:text-center"
             >
               <span className="text-white">Third-year</span> CS student at{" "}
               <span className="text-white">KIET</span> focused on the
@@ -612,7 +731,7 @@ export default function Portfolio() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="flex gap-4 md:gap-6 justify-center"
+              className="flex gap-4 md:gap-6 justify-start md:justify-center"
             >
               <a href="#projects">
                 <motion.button
@@ -621,7 +740,12 @@ export default function Portfolio() {
                   className="bg-white cursor-pointer text-black px-6 md:px-10 py-3 md:py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 md:gap-3 text-sm md:text-lg"
                 >
                   VIEW PROJECTS
-                  
+                  <motion.div
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    <ArrowUpRight size={20} className="md:w-6 md:h-6" />
+                  </motion.div>
                 </motion.button>
               </a>
             </motion.div>
