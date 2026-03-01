@@ -103,13 +103,19 @@ const education = [
     degree: "B.Tech Computer Science",
     school: "KIET Group of Institutions",
     year: "2023 - 2027",
-    score: "7.39 GPA",
+    score: "7.48 GPA",
   },
   {
     degree: "Higher Secondary (12th)",
     school: "Rani Laxmi Bai School",
     year: "2021 - 2022",
     score: "84%",
+  },
+  {
+    degree: "Secondary (10th)",
+    school: "Rani Laxmi Bai School",
+    year: "2019 - 2020",
+    score: "86%",
   },
 ];
 
@@ -148,6 +154,18 @@ const MANUAL_COMMIT_DATA = {
   "2026-02-14": { count: 13, level: 4 },
   "2026-02-15": { count: 13, level: 4 },
   "2026-02-16": { count: 11, level: 4 },
+  "2026-02-17": { count: 15, level: 4 },
+  "2026-02-18": { count: 2, level: 1 },
+  "2026-02-19": { count: 6, level: 3 },
+  "2026-02-20": { count: 2, level: 1 },
+  "2026-02-22": { count: 1, level: 1 },
+  "2026-02-23": { count: 7, level: 3 },
+  "2026-02-24": { count: 6, level: 3 },
+  "2026-02-25": { count: 5, level: 2 },
+  "2026-02-26": { count: 5, level: 2 },
+  "2026-02-27": { count: 2, level: 1 },
+  "2026-02-28": { count: 4, level: 2 },
+  "2026-03-01": { count: 11, level: 4 },
 };
 
 const GitHubContributionGraph = () => {
@@ -180,14 +198,12 @@ const GitHubContributionGraph = () => {
     const allDays = [];
     let commitSum = 0;
 
-    // Helper: Format Date string to "MMM DD"
     const formatDateLabel = (dateStr) => {
       if (!dateStr) return "";
       const d = new Date(dateStr);
       return `${monthNames[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}`;
     };
 
-    // 1. Build the calendar grid
     for (let i = 0; i < 3; i++) allDays.push({ date: "empty", month: -1 });
 
     for (let month = 0; month < 12; month++) {
@@ -209,7 +225,6 @@ const GitHubContributionGraph = () => {
       }
     }
 
-    // 2. Advanced Streak Logic with Date Ranges
     const activeDates = Object.keys(MANUAL_COMMIT_DATA)
       .filter((d) => MANUAL_COMMIT_DATA[d].count > 0)
       .sort((a, b) => new Date(a) - new Date(b));
@@ -217,7 +232,6 @@ const GitHubContributionGraph = () => {
     let longest = 0;
     let longestStart = "";
     let longestEnd = "";
-
     let current = 0;
     let currentRangeStr = "No active streak";
 
@@ -225,7 +239,6 @@ const GitHubContributionGraph = () => {
       let tempStreak = 1;
       let tempStart = activeDates[0];
 
-      // Longest Streak Calculation
       for (let i = 1; i < activeDates.length; i++) {
         const prev = new Date(activeDates[i - 1]);
         const curr = new Date(activeDates[i]);
@@ -234,7 +247,6 @@ const GitHubContributionGraph = () => {
         if (diffDays === 1) {
           tempStreak++;
         } else {
-          // Check if temp was longest before resetting
           if (tempStreak >= longest) {
             longest = tempStreak;
             longestStart = tempStart;
@@ -244,21 +256,18 @@ const GitHubContributionGraph = () => {
           tempStart = activeDates[i];
         }
       }
-      // Final check for the last running streak in loop
       if (tempStreak >= longest) {
         longest = tempStreak;
         longestStart = tempStart;
         longestEnd = activeDates[activeDates.length - 1];
       }
 
-      // Current Streak Calculation
       const todayReference = new Date("2026-02-16");
       const lastCommitDate = new Date(activeDates[activeDates.length - 1]);
       const diffFromToday =
         (todayReference - lastCommitDate) / (1000 * 60 * 60 * 24);
 
       if (diffFromToday <= 1) {
-        // Find how far back the current contiguous streak goes
         let currentStreakCount = 0;
         let pointer = activeDates.length - 1;
         let currentStreakStart = activeDates[pointer];
@@ -288,7 +297,6 @@ const GitHubContributionGraph = () => {
         ? `${formatDateLabel(longestStart)} — ${formatDateLabel(longestEnd)}`
         : "None";
 
-    // 3. Prepare Grid structure
     while (allDays.length % 7 !== 0) allDays.push({ date: "empty", month: -1 });
     const weeksData = [];
     for (let i = 0; i < allDays.length; i += 7)
@@ -314,11 +322,6 @@ const GitHubContributionGraph = () => {
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 162, 0.2); }
-          50% { box-shadow: 0 0 15px rgba(0, 255, 162, 0.5), 0 0 20px rgba(0, 255, 162, 0.2); }
-        }
-        .contribution-box-active { animation: pulse-glow 3s ease-in-out infinite; }
       `}</style>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-10 gap-6">
@@ -334,7 +337,6 @@ const GitHubContributionGraph = () => {
           </p>
         </div>
 
-        {/* Stats Row */}
         <div className="flex gap-8 md:gap-12 shrink-0">
           <div className="text-left md:text-right">
             <span className="text-2xl md:text-4xl font-black text-[#34d399] tracking-tighter leading-none block">
@@ -394,22 +396,10 @@ const GitHubContributionGraph = () => {
                     }
                     onMouseLeave={() => setHoverData(null)}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{
-                      scale: day.level > 0 ? [1, 1.05, 1] : 1,
-                      opacity: 1,
-                    }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{
                       delay: (wi * 7 + di) * 0.002,
                       duration: 0.3,
-                      scale:
-                        day.level > 0
-                          ? {
-                              duration: 2,
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                              delay: Math.random() * 2,
-                            }
-                          : { duration: 0.3 },
                     }}
                     whileHover={{
                       scale: 1.3,
@@ -420,27 +410,12 @@ const GitHubContributionGraph = () => {
                       day.date !== "empty"
                         ? "hover:ring-2 hover:ring-white/50 cursor-crosshair"
                         : "opacity-10"
-                    } ${day.level > 0 ? "contribution-box-active" : ""}`}
+                    }`}
                     style={{
                       backgroundColor:
                         day.date === "empty" ? "#111" : getColor(day.level),
                     }}
-                  >
-                    {day.level > 0 && (
-                      <motion.div
-                        className="absolute inset-0 rounded-[2px]"
-                        animate={{ opacity: [0.2, 0.7, 0.2] }}
-                        transition={{
-                          duration: 2.5,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                        style={{
-                          background: `radial-gradient(circle, ${getColor(day.level)} 0%, transparent 80%)`,
-                        }}
-                      />
-                    )}
-                  </motion.div>
+                  />
                 ))}
               </div>
             );
@@ -479,56 +454,8 @@ const GitHubContributionGraph = () => {
   );
 };
 
-const AnimatedBackground = () => {
-  const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 });
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight });
-      const handleResize = () =>
-        setDimensions({ width: window.innerWidth, height: window.innerHeight });
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
-  }, []);
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-emerald-500/20 rounded-full"
-          initial={{
-            x: Math.random() * dimensions.width,
-            y: Math.random() * dimensions.height,
-          }}
-          animate={{
-            x: Math.random() * dimensions.width,
-            y: Math.random() * dimensions.height,
-            scale: [1, 1.5, 1],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: Math.random() * 10 + 10,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      ))}
-    </div>
-  );
-};
-
 export default function Portfolio() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleMouseMove = (e) =>
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   return (
     <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black overflow-x-hidden">
@@ -633,13 +560,6 @@ export default function Portfolio() {
           id="about"
           className="min-h-screen flex items-center justify-center relative pt-16 md:pt-0"
         >
-          <AnimatedBackground />
-          <motion.div
-            className="absolute w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"
-            animate={{ x: mousePosition.x - 192, y: mousePosition.y - 192 }}
-            transition={{ type: "spring", damping: 30, stiffness: 200 }}
-          />
-
           <div className="text-center relative z-10 px-4">
             <motion.span
               initial={{ opacity: 0, y: 20 }}
@@ -662,7 +582,7 @@ export default function Portfolio() {
                   transition={{ duration: 0.8, delay: 0.3 }}
                   className="block"
                 >
-                  BUILDING
+                  machine learning
                 </motion.span>
                 <motion.span
                   initial={{ opacity: 0, y: 50 }}
@@ -670,7 +590,7 @@ export default function Portfolio() {
                   transition={{ duration: 0.8, delay: 0.5 }}
                   className="block text-zinc-800"
                 >
-                  FUTURE.
+                  enthusiast.
                 </motion.span>
               </h1>
             </motion.div>
@@ -696,33 +616,14 @@ export default function Portfolio() {
             >
               <a href="#projects">
                 <motion.button
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 0 30px rgba(16, 185, 129, 0.3)",
-                  }}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-white cursor-pointer text-black px-6 md:px-10 py-3 md:py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 md:gap-3 text-sm md:text-lg"
                 >
                   VIEW PROJECTS
-                  <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    <ArrowUpRight size={20} className="md:w-6 md:h-6" />
-                  </motion.div>
+                  
                 </motion.button>
               </a>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, y: [0, 10, 0] }}
-              transition={{ duration: 2, delay: 1.2, repeat: Infinity }}
-              className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 hidden md:flex"
-            >
-              <div className="w-5 h-8 md:w-6 md:h-10 border-2 border-zinc-700 rounded-full flex justify-center pt-2">
-                <div className="w-1 h-2 bg-zinc-700 rounded-full" />
-              </div>
             </motion.div>
           </div>
         </section>
