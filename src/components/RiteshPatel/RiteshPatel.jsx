@@ -153,11 +153,7 @@ const MANUAL_COMMIT_DATA = {
   "2026-02-13": { count: 23, level: 4 },
   "2026-02-14": { count: 13, level: 4 },
   "2026-02-15": { count: 13, level: 4 },
-<<<<<<< HEAD
-  "2026-02-16": { count: 9, level: 3 },
-=======
   "2026-02-16": { count: 11, level: 4 },
->>>>>>> 2138e408a05b6a120ff83195cab0c692ce5c6555
   "2026-02-17": { count: 15, level: 4 },
   "2026-02-18": { count: 2, level: 1 },
   "2026-02-19": { count: 6, level: 3 },
@@ -192,7 +188,6 @@ const MANUAL_COMMIT_DATA = {
   "2026-03-22": { count: 1, level: 1 },
   "2026-03-23": { count: 9, level: 3 },
   "2026-03-24": { count: 8, level: 3 },
-
 };
 
 const GitHubContributionGraph = () => {
