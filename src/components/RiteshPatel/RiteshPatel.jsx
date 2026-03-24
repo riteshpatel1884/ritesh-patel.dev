@@ -1004,7 +1004,7 @@ export default function Portfolio() {
                 Let's <br /> Connect
               </h2>
               <p className="text-zinc-500 italic max-w-xs leading-relaxed text-sm md:text-base">
-                Currently open for 2026/27 internships.
+                Currently open for internships.
               </p>
             </motion.div>
             <div className="md:w-1/2 w-full space-y-4">
