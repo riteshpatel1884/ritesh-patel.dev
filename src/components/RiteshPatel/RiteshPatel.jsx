@@ -103,13 +103,19 @@ const education = [
     degree: "B.Tech Computer Science",
     school: "KIET Group of Institutions",
     year: "2023 - 2027",
-    score: "7.39 GPA",
+    score: "7.48 GPA",
   },
   {
     degree: "Higher Secondary (12th)",
     school: "Rani Laxmi Bai School",
     year: "2021 - 2022",
     score: "84%",
+  },
+  {
+    degree: "Secondary (12th)",
+    school: "Rani Laxmi Bai School",
+    year: "2019 - 2020",
+    score: "86%",
   },
 ];
 
@@ -147,7 +153,11 @@ const MANUAL_COMMIT_DATA = {
   "2026-02-13": { count: 23, level: 4 },
   "2026-02-14": { count: 13, level: 4 },
   "2026-02-15": { count: 13, level: 4 },
+<<<<<<< HEAD
   "2026-02-16": { count: 9, level: 3 },
+=======
+  "2026-02-16": { count: 11, level: 4 },
+>>>>>>> 2138e408a05b6a120ff83195cab0c692ce5c6555
   "2026-02-17": { count: 15, level: 4 },
   "2026-02-18": { count: 2, level: 1 },
   "2026-02-19": { count: 6, level: 3 },
@@ -181,12 +191,19 @@ const MANUAL_COMMIT_DATA = {
   "2026-03-21": { count: 1, level: 1 },
   "2026-03-22": { count: 1, level: 1 },
   "2026-03-23": { count: 9, level: 3 },
-  "2026-03-24": { count: 7, level: 3 },
+  "2026-03-24": { count: 8, level: 3 },
+
 };
 
 const GitHubContributionGraph = () => {
   const [weeks, setWeeks] = useState([]);
-  const [totalCommits, setTotalCommits] = useState(0);
+  const [stats, setStats] = useState({
+    total: 0,
+    currentStreak: 0,
+    currentStreakRange: "",
+    longestStreak: 0,
+    longestStreakRange: "",
+  });
   const [hoverData, setHoverData] = useState(null);
 
   useEffect(() => {
@@ -207,6 +224,12 @@ const GitHubContributionGraph = () => {
     const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     const allDays = [];
     let commitSum = 0;
+
+    const formatDateLabel = (dateStr) => {
+      if (!dateStr) return "";
+      const d = new Date(dateStr);
+      return `${monthNames[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}`;
+    };
 
     for (let i = 0; i < 3; i++) allDays.push({ date: "empty", month: -1 });
 
@@ -229,13 +252,91 @@ const GitHubContributionGraph = () => {
       }
     }
 
+    const activeDates = Object.keys(MANUAL_COMMIT_DATA)
+      .filter((d) => MANUAL_COMMIT_DATA[d].count > 0)
+      .sort((a, b) => new Date(a) - new Date(b));
+
+    let longest = 0;
+    let longestStart = "";
+    let longestEnd = "";
+    let current = 0;
+    let currentRangeStr = "No active streak";
+
+    if (activeDates.length > 0) {
+      let tempStreak = 1;
+      let tempStart = activeDates[0];
+
+      for (let i = 1; i < activeDates.length; i++) {
+        const prev = new Date(activeDates[i - 1]);
+        const curr = new Date(activeDates[i]);
+        const diffDays = (curr - prev) / (1000 * 60 * 60 * 24);
+
+        if (diffDays === 1) {
+          tempStreak++;
+        } else {
+          if (tempStreak >= longest) {
+            longest = tempStreak;
+            longestStart = tempStart;
+            longestEnd = activeDates[i - 1];
+          }
+          tempStreak = 1;
+          tempStart = activeDates[i];
+        }
+      }
+      if (tempStreak >= longest) {
+        longest = tempStreak;
+        longestStart = tempStart;
+        longestEnd = activeDates[activeDates.length - 1];
+      }
+
+      const todayReference = new Date("2026-02-16");
+      const lastCommitDate = new Date(activeDates[activeDates.length - 1]);
+      const diffFromToday =
+        (todayReference - lastCommitDate) / (1000 * 60 * 60 * 24);
+
+      if (diffFromToday <= 1) {
+        let currentStreakCount = 0;
+        let pointer = activeDates.length - 1;
+        let currentStreakStart = activeDates[pointer];
+
+        while (pointer >= 0) {
+          if (pointer === activeDates.length - 1) {
+            currentStreakCount = 1;
+          } else {
+            const nextDate = new Date(activeDates[pointer + 1]);
+            const thisDate = new Date(activeDates[pointer]);
+            if ((nextDate - thisDate) / (1000 * 60 * 60 * 24) === 1) {
+              currentStreakCount++;
+              currentStreakStart = activeDates[pointer];
+            } else {
+              break;
+            }
+          }
+          pointer--;
+        }
+        current = currentStreakCount;
+        currentRangeStr = `${formatDateLabel(currentStreakStart)} — ${formatDateLabel(activeDates[activeDates.length - 1])}`;
+      }
+    }
+
+    const longestRangeStr =
+      longest > 0
+        ? `${formatDateLabel(longestStart)} — ${formatDateLabel(longestEnd)}`
+        : "None";
+
     while (allDays.length % 7 !== 0) allDays.push({ date: "empty", month: -1 });
     const weeksData = [];
     for (let i = 0; i < allDays.length; i += 7)
       weeksData.push(allDays.slice(i, i + 7));
 
     setWeeks(weeksData);
-    setTotalCommits(commitSum);
+    setStats({
+      total: commitSum,
+      currentStreak: current,
+      currentStreakRange: currentRangeStr,
+      longestStreak: longest,
+      longestStreakRange: longestRangeStr,
+    });
   }, []);
 
   const getColor = (level) => {
@@ -248,19 +349,10 @@ const GitHubContributionGraph = () => {
       <style>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 162, 0.2); }
-          50% { box-shadow: 0 0 15px rgba(0, 255, 162, 0.5), 0 0 20px rgba(0, 255, 162, 0.2); }
-        }
-        
-        .contribution-box-active {
-          animation: pulse-glow 3s ease-in-out infinite;
-        }
       `}</style>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-10">
-        <div className="flex-1 pr-4 md:pr-10 mb-4 md:mb-0">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-10 gap-6">
+        <div className="flex-1 w-full">
           <div className="flex items-center gap-2 md:gap-4">
             <h2 className="text-lg md:text-2xl font-bold uppercase tracking-tighter whitespace-nowrap">
               Commitment to Growth
@@ -271,13 +363,38 @@ const GitHubContributionGraph = () => {
             Activity Log / Year 2026
           </p>
         </div>
-        <div className="text-left md:text-right">
-          <span className="text-3xl md:text-5xl font-black text-[#34d399] tracking-tighter leading-none">
-            {totalCommits}
-          </span>
-          <p className="text-[8px] md:text-[10px] text-zinc-500 uppercase font-black tracking-widest mt-1 md:mt-2">
-            Total Contributions
-          </p>
+
+        <div className="flex gap-8 md:gap-12 shrink-0">
+          <div className="text-left md:text-right">
+            <span className="text-2xl md:text-4xl font-black text-[#34d399] tracking-tighter leading-none block">
+              {stats.total}
+            </span>
+            <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
+              Commits
+            </p>
+          </div>
+          <div className="text-left md:text-right border-l border-zinc-800 pl-8 md:pl-12">
+            <span className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none block">
+              {stats.currentStreak}
+            </span>
+            <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
+              Current Streak
+            </p>
+            <p className="text-[6px] md:text-[8px] text-zinc-600 font-mono mt-0.5 uppercase">
+              {stats.currentStreakRange}
+            </p>
+          </div>
+          <div className="text-left md:text-right border-l border-zinc-800 pl-8 md:pl-12">
+            <span className="text-2xl md:text-4xl font-black text-white tracking-tighter leading-none block">
+              {stats.longestStreak}
+            </span>
+            <p className="text-[7px] md:text-[9px] text-zinc-500 uppercase font-black tracking-widest mt-1">
+              Longest Streak
+            </p>
+            <p className="text-[6px] md:text-[8px] text-zinc-600 font-mono mt-0.5 uppercase">
+              {stats.longestStreakRange}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -306,22 +423,10 @@ const GitHubContributionGraph = () => {
                     }
                     onMouseLeave={() => setHoverData(null)}
                     initial={{ scale: 0, opacity: 0 }}
-                    animate={{
-                      scale: day.level > 0 ? [1, 1.05, 1] : 1,
-                      opacity: 1,
-                    }}
+                    animate={{ scale: 1, opacity: 1 }}
                     transition={{
                       delay: (wi * 7 + di) * 0.002,
                       duration: 0.3,
-                      scale:
-                        day.level > 0
-                          ? {
-                              duration: 2 + Math.random(),
-                              repeat: Infinity,
-                              ease: "easeInOut",
-                              delay: Math.random() * 2,
-                            }
-                          : { duration: 0.3 },
                     }}
                     whileHover={{
                       scale: 1.3,
@@ -332,28 +437,12 @@ const GitHubContributionGraph = () => {
                       day.date !== "empty"
                         ? "hover:ring-2 hover:ring-white/50 cursor-crosshair"
                         : "opacity-10"
-                    } ${day.level > 0 ? "contribution-box-active" : ""}`}
+                    }`}
                     style={{
                       backgroundColor:
                         day.date === "empty" ? "#111" : getColor(day.level),
                     }}
-                  >
-                    {day.level > 0 && (
-                      <motion.div
-                        className="absolute inset-0 rounded-[2px]"
-                        animate={{ opacity: [0.2, 0.7, 0.2] }}
-                        transition={{
-                          duration: 2.5 + Math.random(),
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                          delay: Math.random() * 2,
-                        }}
-                        style={{
-                          background: `radial-gradient(circle, ${getColor(day.level)} 0%, transparent 80%)`,
-                        }}
-                      />
-                    )}
-                  </motion.div>
+                  />
                 ))}
               </div>
             );
@@ -392,58 +481,86 @@ const GitHubContributionGraph = () => {
   );
 };
 
-const AnimatedBackground = () => {
-  const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 });
+/* Auto-fits each hero word to exactly fill the container width on mobile */
+const AutoFitHero = () => {
+  const containerRef = React.useRef(null);
+  const [sizes, setSizes] = React.useState({
+    machine: 72,
+    learning: 72,
+    enthusiast: 45,
+  });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setDimensions({ width: window.innerWidth, height: window.innerHeight });
-      const handleResize = () => {
-        setDimensions({ width: window.innerWidth, height: window.innerHeight });
+  React.useEffect(() => {
+    const measure = () => {
+      if (!containerRef.current) return;
+      const W = containerRef.current.offsetWidth;
+      if (!W) return;
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const fitSize = (text, targetW, startSize = 200) => {
+        let size = startSize;
+        while (size > 8) {
+          ctx.font = `900 ${size}px Arial`;
+          const tw = ctx.measureText(text).width * 0.93; // 0.93 accounts for letter-spacing -0.04em
+          if (tw <= targetW) return size;
+          size -= 1;
+        }
+        return size;
       };
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }
+
+      setSizes({
+        machine: fitSize("MACHINE", W),
+        learning: fitSize("LEARNING", W),
+        enthusiast: fitSize("ENTHUSIAST.", W),
+      });
+    };
+
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
   }, []);
 
+  const words = [
+    { text: "MACHINE", size: sizes.machine, color: "#ffffff", delay: 0.2 },
+    { text: "LEARNING", size: sizes.learning, color: "#ffffff", delay: 0.35 },
+    {
+      text: "ENTHUSIAST.",
+      size: sizes.enthusiast,
+      color: "#3f3f46",
+      delay: 0.5,
+    },
+  ];
+
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 bg-emerald-500/20 rounded-full"
-          initial={{
-            x: Math.random() * dimensions.width,
-            y: Math.random() * dimensions.height,
+    <div ref={containerRef} className="md:hidden pb-6 overflow-hidden">
+      {words.map(({ text, size, color, delay }) => (
+        <motion.span
+          key={text}
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay }}
+          style={{
+            display: "block",
+            fontSize: `${size}px`,
+            fontWeight: 900,
+            textTransform: "uppercase",
+            letterSpacing: "-0.04em",
+            lineHeight: 0.86,
+            whiteSpace: "nowrap",
+            color,
           }}
-          animate={{
-            x: Math.random() * dimensions.width,
-            y: Math.random() * dimensions.height,
-            scale: [1, 1.5, 1],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: Math.random() * 10 + 10,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
+        >
+          {text}
+        </motion.span>
       ))}
     </div>
   );
 };
 
 export default function Portfolio() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   return (
     <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black overflow-x-hidden">
@@ -458,7 +575,6 @@ export default function Portfolio() {
             RITESH<span className="text-zinc-600">PATEL</span>
           </motion.div>
 
-          {/* Desktop Menu */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -480,7 +596,6 @@ export default function Portfolio() {
             ))}
           </motion.div>
 
-          {/* Social Icons */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -501,7 +616,6 @@ export default function Portfolio() {
             </motion.div>
           </motion.div>
 
-          {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-white p-2"
@@ -510,7 +624,6 @@ export default function Portfolio() {
           </button>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -550,38 +663,78 @@ export default function Portfolio() {
         {/* Hero Section */}
         <section
           id="about"
-          className="min-h-screen flex items-center justify-center relative pt-16 md:pt-0"
+          className="min-h-screen flex flex-col justify-center relative"
+          style={{ paddingTop: "5rem", paddingBottom: "2rem" }}
         >
-          <AnimatedBackground />
-          <motion.div
-            className="absolute w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"
-            animate={{ x: mousePosition.x - 192, y: mousePosition.y - 192 }}
-            transition={{ type: "spring", damping: 30, stiffness: 200 }}
-          />
+          <div className="relative z-10 w-full">
+            <style>{`
+              /* ── MOBILE HERO: full-bleed breakout ── */
+              .hero-mobile {
+                display: block;
+                padding-bottom: 1.5rem;
+              }
+              .hero-mobile .word {
+                display: block;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: -0.04em;
+                line-height: 0.84;
+                white-space: nowrap;
+                /* Scale each word to fill the container width */
+                width: fit-content;
+              }
+              /*
+               * Available width = 100vw - 2*padding(1rem) = calc(100vw - 2rem)
+               * MACHINE   = 7 chars  → ~19vw per char fits at ~0.85 tracking
+               * LEARNING  = 8 chars  → same
+               * ENTHUSIAST. = 11 chars
+               * Use transform scaleX to perfectly fill width
+               */
+              .hero-mobile .w-machine {
+                font-size: clamp(3rem, 18.5vw, 8rem);
+              }
+              .hero-mobile .w-learning {
+                font-size: clamp(3rem, 18.5vw, 8rem);
+              }
+              .hero-mobile .w-enthusiast {
+                font-size: clamp(1.8rem, 11.5vw, 5rem);
+                color: #3f3f46;
+              }
 
-          <div className="text-center relative z-10 px-4">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-zinc-500 font-mono mb-4 md:mb-6 block tracking-widest uppercase text-xs md:text-sm"
-            >
-              Full Stack & ML Enthusiast
-            </motion.span>
+              /* ── DESKTOP ── */
+              .hero-desktop {
+                display: none;
+                font-weight: 900;
+                text-transform: uppercase;
+                letter-spacing: -0.03em;
+                line-height: 0.85;
+                margin-bottom: 1.5rem;
+                font-size: clamp(8rem, 14vw, 11.25rem);
+              }
+              @media (min-width: 768px) {
+                .hero-mobile  { display: none; }
+                .hero-desktop { display: block; }
+              }
+            `}</style>
 
+            {/* ── MOBILE HERO: JS auto-fit ── */}
+            <AutoFitHero />
+
+            {/* ── DESKTOP HERO ── */}
             <motion.div
+              className="hidden md:block"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <h1 className="text-5xl sm:text-7xl md:text-[140px] lg:text-[180px] font-black tracking-tighter leading-[0.85] mb-6 md:mb-8 uppercase">
+              <h1 className="hero-desktop text-center">
                 <motion.span
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.3 }}
                   className="block"
                 >
-                  BUILDING
+                  machine learning
                 </motion.span>
                 <motion.span
                   initial={{ opacity: 0, y: 50 }}
@@ -589,7 +742,7 @@ export default function Portfolio() {
                   transition={{ duration: 0.8, delay: 0.5 }}
                   className="block text-zinc-800"
                 >
-                  FUTURE.
+                  enthusiast.
                 </motion.span>
               </h1>
             </motion.div>
@@ -598,7 +751,7 @@ export default function Portfolio() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-base md:text-xl lg:text-2xl text-zinc-400 max-w-3xl mx-auto font-medium leading-relaxed mb-8 md:mb-12 px-4"
+              className="text-sm md:text-xl lg:text-2xl text-zinc-400 max-w-3xl md:mx-auto font-medium leading-relaxed mb-8 md:mb-12 md:text-center"
             >
               <span className="text-white">Third-year</span> CS student at{" "}
               <span className="text-white">KIET</span> focused on the
@@ -611,14 +764,11 @@ export default function Portfolio() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="flex gap-4 md:gap-6 justify-center"
+              className="flex gap-4 md:gap-6 justify-start md:justify-center"
             >
               <a href="#projects">
                 <motion.button
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: "0 0 30px rgba(16, 185, 129, 0.3)",
-                  }}
+                  whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="bg-white cursor-pointer text-black px-6 md:px-10 py-3 md:py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 md:gap-3 text-sm md:text-lg"
                 >
@@ -631,18 +781,6 @@ export default function Portfolio() {
                   </motion.div>
                 </motion.button>
               </a>
-            </motion.div>
-
-            {/* Scroll indicator */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, y: [0, 10, 0] }}
-              transition={{ duration: 2, delay: 1.2, repeat: Infinity }}
-              className="absolute bottom-6 md:bottom-10 left-1/2 transform -translate-x-1/2 hidden md:flex"
-            >
-              <div className="w-5 h-8 md:w-6 md:h-10 border-2 border-zinc-700 rounded-full flex justify-center pt-2">
-                <div className="w-1 h-2 bg-zinc-700 rounded-full" />
-              </div>
             </motion.div>
           </div>
         </section>
