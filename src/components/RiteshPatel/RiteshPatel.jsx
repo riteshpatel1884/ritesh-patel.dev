@@ -133,7 +133,7 @@ const skills = {
 const education = [
   {
     degree: "B.Tech Computer Science",
-    school: "KIET Group of Institutions",
+    school: "KIET University",
     year: "2023 - 2027",
     score: "7.48 GPA",
   },
@@ -768,7 +768,7 @@ export default function Portfolio() {
               className="text-sm md:text-xl lg:text-2xl text-zinc-400 max-w-3xl md:mx-auto font-medium leading-relaxed mb-6 md:mb-12 md:text-center"
             >
               <span className="text-white">Third-year</span> CS student at{" "}
-              <span className="text-white">KIET</span> focused on the
+              <span className="text-white">KIET </span> focused on the
               intersection of{" "}
               <span className="text-white">Machine Learning</span> and{" "}
               <span className="text-white">Full-Stack Engineering</span>
