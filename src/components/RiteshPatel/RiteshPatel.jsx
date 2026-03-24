@@ -73,6 +73,9 @@ const X = ({ size = 24, className = "" }) => (
   </svg>
 );
 
+const RESUME_DRIVE_LINK =
+  "https://drive.google.com/file/d/1luydvvYx4QDIUoG861OAQjIIiFisli_g/view?usp=drive_link";
+
 const skills = {
   Programming: ["Java", "Python", "JavaScript", "SQL"],
   "AI/ML": [
@@ -268,163 +271,6 @@ const MANUAL_COMMIT_DATA = {
   "2026-03-23": { count: 9, level: 3 },
   "2026-03-24": { count: 8, level: 3 },
 };
-
-// ─── Resume Modal ────────────────────────────────────────────────────────────
-const ResumeModal = ({ onClose }) => (
-  <AnimatePresence>
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-8"
-      style={{
-        backgroundColor: "rgba(0,0,0,0.85)",
-        backdropFilter: "blur(8px)",
-      }}
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.92, y: 30 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.92, y: 30 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-[#0a0a0a] border border-zinc-800 rounded-3xl shadow-2xl"
-        style={{ scrollbarWidth: "none" }}
-      >
-        {/* Header */}
-        <div className="sticky top-0 z-10 flex items-center justify-between px-6 md:px-10 py-5 border-b border-zinc-900 bg-[#0a0a0a]/95 backdrop-blur">
-          <div>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-600 mb-0.5">
-              Curriculum Vitae
-            </p>
-            <h2 className="text-xl md:text-2xl font-black tracking-tighter uppercase">
-              Ritesh Patel
-            </h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="w-9 h-9 rounded-full border border-zinc-800 flex items-center justify-center hover:border-white hover:bg-white hover:text-black transition-all"
-          >
-            <X size={14} />
-          </button>
-        </div>
-
-        {/* Body */}
-        <div className="px-6 md:px-10 py-8 space-y-10 text-sm">
-          {/* Contact */}
-          <div className="flex flex-wrap gap-x-6 gap-y-1 text-zinc-400 font-mono text-[11px] uppercase tracking-wider">
-            <span>riteshpatel1884@gmail.com</span>
-            <span>+91 8858295418</span>
-            <span>Ghaziabad, India</span>
-            <span>github.com/riteshpatel1884</span>
-            <span>linkedin.com/in/riteshpatel1884</span>
-          </div>
-
-          <Divider label="Summary" />
-          <p className="text-zinc-300 leading-relaxed">
-            Third-year Computer Science student at KIET University specializing
-            in Machine Learning and Full-Stack Engineering. Experienced in
-            building production-grade ML pipelines, NLP systems, and computer
-            vision models with hands-on cloud certifications across AWS, Azure,
-            and GCP.
-          </p>
-
-          <Divider label="Education" />
-          <div className="space-y-5">
-            {education.map((e, i) => (
-              <div key={i} className="flex justify-between items-start gap-4">
-                <div>
-                  <p className="font-bold text-white">{e.degree}</p>
-                  <p className="text-zinc-500 text-xs">{e.school}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-zinc-400 text-xs font-mono">{e.year}</p>
-                  <p className="text-emerald-400 font-bold text-xs">
-                    {e.score}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <Divider label="Projects" />
-          <div className="space-y-6">
-            {projects.map((p) => (
-              <div key={p.num} className="border-l border-zinc-800 pl-4">
-                <div className="flex justify-between items-start gap-2 mb-1">
-                  <p className="font-bold text-white">{p.title}</p>
-                  <span className="text-[10px] text-zinc-600 font-mono shrink-0">
-                    {p.period}
-                  </span>
-                </div>
-                <p className="text-[10px] text-zinc-600 uppercase tracking-widest mb-2">
-                  {p.category}
-                </p>
-                <p className="text-zinc-400 text-xs leading-relaxed mb-2">
-                  {p.description}
-                </p>
-                <div className="flex flex-wrap gap-1.5">
-                  {p.tags.map((t) => (
-                    <span
-                      key={t}
-                      className="text-[9px] border border-zinc-800 px-2 py-0.5 rounded-full text-zinc-500 uppercase tracking-wider"
-                    >
-                      {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <Divider label="Skills" />
-          <div className="space-y-3">
-            {Object.entries(skills).map(([cat, items]) => (
-              <div key={cat} className="flex gap-3 items-start">
-                <span className="text-[9px] uppercase tracking-widest text-zinc-600 font-bold w-24 shrink-0 pt-0.5">
-                  {cat}
-                </span>
-                <p className="text-zinc-300 text-xs leading-relaxed">
-                  {items.join(", ")}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <Divider label="Certifications" />
-          <div className="space-y-3">
-            {certifications.map((c, i) => (
-              <div key={i} className="flex justify-between items-center">
-                <div>
-                  <p className="text-white font-semibold text-xs">{c.title}</p>
-                  <p className="text-zinc-500 text-[10px]">{c.issuer}</p>
-                </div>
-                <span className="text-[10px] text-zinc-600 font-mono">
-                  {c.date}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* No-download notice */}
-          <p className="text-center text-[9px] text-zinc-700 uppercase tracking-[0.3em] pt-4 pb-2">
-            View only — not available for download
-          </p>
-        </div>
-      </motion.div>
-    </motion.div>
-  </AnimatePresence>
-);
-
-const Divider = ({ label }) => (
-  <div className="flex items-center gap-3">
-    <span className="text-[9px] font-black uppercase tracking-[0.4em] text-zinc-500 shrink-0">
-      {label}
-    </span>
-    <div className="h-px flex-1 bg-zinc-800" />
-  </div>
-);
 
 // ─── GitHub Contribution Graph ────────────────────────────────────────────────
 const GitHubContributionGraph = () => {
@@ -753,13 +599,9 @@ const AutoFitHero = () => {
 // ─── Main Portfolio ───────────────────────────────────────────────────────────
 export default function Portfolio() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [resumeOpen, setResumeOpen] = useState(false);
 
   return (
     <div className="bg-black text-white min-h-screen font-sans selection:bg-white selection:text-black overflow-x-hidden">
-      {/* Resume Modal */}
-      {resumeOpen && <ResumeModal onClose={() => setResumeOpen(false)} />}
-
       {/* Navbar */}
       <nav className="fixed top-0 w-full z-[100] border-b border-zinc-900 bg-black/80 backdrop-blur-xl">
         <div className="max-w-6xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
@@ -932,15 +774,17 @@ export default function Portfolio() {
               transition={{ duration: 0.8, delay: 0.9 }}
               className="flex gap-4 md:gap-6 justify-start md:justify-center"
             >
-              {/* ── VIEW RESUME button (no download) ── */}
-              <motion.button
-                onClick={() => setResumeOpen(true)}
+              {/* ── VIEW RESUME button — opens Google Drive link in new tab ── */}
+              <motion.a
+                href={RESUME_DRIVE_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="bg-white cursor-pointer text-black px-6 md:px-10 py-3 md:py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 md:gap-3 text-sm md:text-lg"
               >
                 VIEW RESUME
-              </motion.button>
+              </motion.a>
             </motion.div>
           </div>
         </section>
