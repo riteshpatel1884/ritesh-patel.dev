@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Lucide icons as inline SVG components
 const Github = ({ size = 24, className = "" }) => (
   <svg
     width={size}
@@ -92,10 +91,43 @@ const X = ({ size = 24, className = "" }) => (
 );
 
 const skills = {
-  Programming: ["Java", "Python", "JavaScript"],
-  "AI/ML": ["TensorFlow", "Scikit-learn", "Computer Vision", "NLP"],
-  "Web Stack": ["MongoDB", "Express", "React", "Node.js", "Tailwind"],
-  Tools: ["Git", "Docker", "AWS"],
+  Programming: ["Java", "Python", "JavaScript", "SQL"],
+  "AI/ML": [
+    "PyTorch",
+    "TensorFlow",
+    "Scikit-learn",
+    "XGBoost",
+    "Computer Vision",
+    "NLP",
+    "Hugging Face",
+  ],
+  "Web Stack": [
+    "MongoDB",
+    "Express",
+    "React",
+    "Node.js",
+    "Next.js",
+    "Flask",
+    "FastAPI",
+  ],
+  Libraries: [
+    "Pandas",
+    "NumPy",
+    "OpenCV",
+    "NLTK",
+    "spaCy",
+    "Matplotlib",
+    "Seaborn",
+  ],
+  Tools: [
+    "Git",
+    "Docker",
+    "AWS",
+    "Google Cloud",
+    "Azure",
+    "VS Code",
+    "PyCharm",
+  ],
 };
 
 const education = [
@@ -107,15 +139,79 @@ const education = [
   },
   {
     degree: "Higher Secondary (12th)",
-    school: "Rani Laxmi Bai School",
+    school: "Rani Laxmi Bai Memorial School",
     year: "2021 - 2022",
     score: "84%",
   },
   {
-    degree: "Secondary (12th)",
-    school: "Rani Laxmi Bai School",
+    degree: "Secondary (10th)",
+    school: "Rani Laxmi Bai Memorial School",
     year: "2019 - 2020",
     score: "86%",
+  },
+];
+
+const certifications = [
+  {
+    title: "AWS Certified AI Practitioner",
+    issuer: "Amazon Web Services",
+    date: "Feb 2026",
+    color: "#FF9900",
+    abbr: "AWS",
+  },
+  {
+    title: "AWS Certified ML Engineer – Associate",
+    issuer: "Amazon Web Services",
+    date: "Jan 2026",
+    color: "#FF9900",
+    abbr: "AWS",
+  },
+  {
+    title: "Azure AI Fundamentals (AI-900)",
+    issuer: "Microsoft",
+    date: "2025",
+    color: "#0078D4",
+    abbr: "AZ",
+  },
+  {
+    title: "Professional ML Engineer",
+    issuer: "Google Cloud",
+    date: "2025",
+    color: "#4285F4",
+    abbr: "GCP",
+  },
+];
+
+const projects = [
+  {
+    num: "01",
+    category: "MACHINE LEARNING / COMPUTER VISION",
+    title: "Medicinal Plant Identifier",
+    description:
+      "A CNN-based image classification model identifying 30+ medicinal plant species with 90%+ test accuracy. Reduced misclassification rate by 44% vs baseline by training on 5K+ images with augmentation and feature extraction.",
+    tags: ["Python", "PyTorch", "OpenCV", "CNN", "Deep Learning"],
+    period: "Sep 2025 – Present",
+    highlights: ["90%+ accuracy", "44% less misclassification", "30+ species"],
+  },
+  {
+    num: "02",
+    category: "NLP / INFORMATION RETRIEVAL",
+    title: "Resume Screening System",
+    description:
+      "An NLP-based ranking system processing 1K+ resumes against job descriptions with sub-2s query response time. Improved top-5 ranking precision by 35% over keyword-match baseline through TF-IDF and cosine similarity.",
+    tags: ["Python", "NLP", "Scikit-learn", "TF-IDF", "Cosine Similarity"],
+    period: "Oct 2025 – Present",
+    highlights: ["sub-2s response", "35% precision gain", "1K+ resumes"],
+  },
+  {
+    num: "03",
+    category: "MACHINE LEARNING / CLASSIFICATION",
+    title: "Customer Churn Prediction",
+    description:
+      "A machine learning model predicting customer churn using XGBoost on 7K+ records across 20+ features. Applied SMOTE to balance a 3:1 class imbalance ratio, attaining 87%+ accuracy with strong F1-score.",
+    tags: ["Python", "Scikit-learn", "XGBoost", "Pandas", "SMOTE"],
+    period: "Nov 2025 – Feb 2026",
+    highlights: ["87%+ accuracy", "7K+ records", "ROC-AUC evaluated"],
   },
 ];
 
@@ -219,15 +315,12 @@ const GitHubContributionGraph = () => {
     const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     const allDays = [];
     let commitSum = 0;
-
     const formatDateLabel = (dateStr) => {
       if (!dateStr) return "";
       const d = new Date(dateStr);
       return `${monthNames[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}`;
     };
-
     for (let i = 0; i < 3; i++) allDays.push({ date: "empty", month: -1 });
-
     for (let month = 0; month < 12; month++) {
       for (let day = 1; day <= daysInMonth[month]; day++) {
         const dateKey = `2026-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -240,32 +333,27 @@ const GitHubContributionGraph = () => {
           date: dateKey,
           count: manualEntry.count,
           level: manualEntry.level,
-          month: month,
+          month,
           monthName: monthNames[month],
-          day: day,
+          day,
         });
       }
     }
-
     const activeDates = Object.keys(MANUAL_COMMIT_DATA)
       .filter((d) => MANUAL_COMMIT_DATA[d].count > 0)
       .sort((a, b) => new Date(a) - new Date(b));
-
-    let longest = 0;
-    let longestStart = "";
-    let longestEnd = "";
-    let current = 0;
-    let currentRangeStr = "No active streak";
-
+    let longest = 0,
+      longestStart = "",
+      longestEnd = "",
+      current = 0,
+      currentRangeStr = "No active streak";
     if (activeDates.length > 0) {
-      let tempStreak = 1;
-      let tempStart = activeDates[0];
-
+      let tempStreak = 1,
+        tempStart = activeDates[0];
       for (let i = 1; i < activeDates.length; i++) {
         const prev = new Date(activeDates[i - 1]);
         const curr = new Date(activeDates[i]);
         const diffDays = (curr - prev) / (1000 * 60 * 60 * 24);
-
         if (diffDays === 1) {
           tempStreak++;
         } else {
@@ -283,17 +371,14 @@ const GitHubContributionGraph = () => {
         longestStart = tempStart;
         longestEnd = activeDates[activeDates.length - 1];
       }
-
       const todayReference = new Date("2026-02-16");
       const lastCommitDate = new Date(activeDates[activeDates.length - 1]);
       const diffFromToday =
         (todayReference - lastCommitDate) / (1000 * 60 * 60 * 24);
-
       if (diffFromToday <= 1) {
-        let currentStreakCount = 0;
-        let pointer = activeDates.length - 1;
-        let currentStreakStart = activeDates[pointer];
-
+        let currentStreakCount = 0,
+          pointer = activeDates.length - 1,
+          currentStreakStart = activeDates[pointer];
         while (pointer >= 0) {
           if (pointer === activeDates.length - 1) {
             currentStreakCount = 1;
@@ -313,17 +398,14 @@ const GitHubContributionGraph = () => {
         currentRangeStr = `${formatDateLabel(currentStreakStart)} — ${formatDateLabel(activeDates[activeDates.length - 1])}`;
       }
     }
-
     const longestRangeStr =
       longest > 0
         ? `${formatDateLabel(longestStart)} — ${formatDateLabel(longestEnd)}`
         : "None";
-
     while (allDays.length % 7 !== 0) allDays.push({ date: "empty", month: -1 });
     const weeksData = [];
     for (let i = 0; i < allDays.length; i += 7)
       weeksData.push(allDays.slice(i, i + 7));
-
     setWeeks(weeksData);
     setStats({
       total: commitSum,
@@ -340,12 +422,8 @@ const GitHubContributionGraph = () => {
   };
 
   return (
-    <section className="w-full bg-black border border-zinc-900 rounded-[32px] p-4 md:p-8 lg:p-12 my-10 md:my-20 shadow-2xl overflow-hidden">
-      <style>{`
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-      `}</style>
-
+    <section className="w-full bg-black border border-zinc-900 rounded-[32px] p-4 md:p-8 lg:p-12 my-6 md:my-20 shadow-2xl overflow-hidden">
+      <style>{`.no-scrollbar::-webkit-scrollbar{display:none}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}`}</style>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 md:mb-10 gap-6">
         <div className="flex-1 w-full">
           <div className="flex items-center gap-2 md:gap-4">
@@ -358,7 +436,6 @@ const GitHubContributionGraph = () => {
             Activity Log / Year 2026
           </p>
         </div>
-
         <div className="flex gap-8 md:gap-12 shrink-0">
           <div className="text-left md:text-right">
             <span className="text-2xl md:text-4xl font-black text-[#34d399] tracking-tighter leading-none block">
@@ -392,7 +469,6 @@ const GitHubContributionGraph = () => {
           </div>
         </div>
       </div>
-
       <div className="relative overflow-x-auto no-scrollbar pb-4 pt-6 md:pt-10">
         <div className="flex gap-1 md:gap-1.5 min-w-max">
           {weeks.map((week, wi) => {
@@ -419,20 +495,13 @@ const GitHubContributionGraph = () => {
                     onMouseLeave={() => setHoverData(null)}
                     initial={{ scale: 0, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    transition={{
-                      delay: (wi * 7 + di) * 0.002,
-                      duration: 0.3,
-                    }}
+                    transition={{ delay: (wi * 7 + di) * 0.002, duration: 0.3 }}
                     whileHover={{
                       scale: 1.3,
                       zIndex: 10,
                       transition: { duration: 0.2 },
                     }}
-                    className={`w-[10px] h-[10px] md:w-[14px] md:h-[14px] rounded-[2px] transition-all relative ${
-                      day.date !== "empty"
-                        ? "hover:ring-2 hover:ring-white/50 cursor-crosshair"
-                        : "opacity-10"
-                    }`}
+                    className={`w-[10px] h-[10px] md:w-[14px] md:h-[14px] rounded-[2px] transition-all relative ${day.date !== "empty" ? "hover:ring-2 hover:ring-white/50 cursor-crosshair" : "opacity-10"}`}
                     style={{
                       backgroundColor:
                         day.date === "empty" ? "#111" : getColor(day.level),
@@ -444,7 +513,6 @@ const GitHubContributionGraph = () => {
           })}
         </div>
       </div>
-
       <AnimatePresence>
         {hoverData && (
           <motion.div
@@ -476,7 +544,6 @@ const GitHubContributionGraph = () => {
   );
 };
 
-/* Auto-fits each hero word to exactly fill the container width on mobile */
 const AutoFitHero = () => {
   const containerRef = React.useRef(null);
   const [sizes, setSizes] = React.useState({
@@ -484,39 +551,33 @@ const AutoFitHero = () => {
     learning: 72,
     enthusiast: 45,
   });
-
   React.useEffect(() => {
     const measure = () => {
       if (!containerRef.current) return;
       const W = containerRef.current.offsetWidth;
       if (!W) return;
-
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-
       const fitSize = (text, targetW, startSize = 200) => {
         let size = startSize;
         while (size > 8) {
           ctx.font = `900 ${size}px Arial`;
-          const tw = ctx.measureText(text).width * 0.93; // 0.93 accounts for letter-spacing -0.04em
+          const tw = ctx.measureText(text).width * 0.93;
           if (tw <= targetW) return size;
           size -= 1;
         }
         return size;
       };
-
       setSizes({
         machine: fitSize("MACHINE", W),
         learning: fitSize("LEARNING", W),
         enthusiast: fitSize("ENTHUSIAST.", W),
       });
     };
-
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
-
   const words = [
     { text: "MACHINE", size: sizes.machine, color: "#ffffff", delay: 0.2 },
     { text: "LEARNING", size: sizes.learning, color: "#ffffff", delay: 0.35 },
@@ -527,9 +588,8 @@ const AutoFitHero = () => {
       delay: 0.5,
     },
   ];
-
   return (
-    <div ref={containerRef} className="md:hidden pb-6 overflow-hidden">
+    <div ref={containerRef} className="md:hidden pb-4 overflow-hidden">
       {words.map(({ text, size, color, delay }) => (
         <motion.span
           key={text}
@@ -569,28 +629,28 @@ export default function Portfolio() {
           >
             RITESH<span className="text-zinc-600">PATEL</span>
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="hidden md:flex gap-6 lg:gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500"
           >
-            {["About", "Projects", "Skills", "Contact"].map((t, i) => (
-              <motion.a
-                key={t}
-                href={`#${t.toLowerCase()}`}
-                className="hover:text-white transition-colors uppercase"
-                whileHover={{ scale: 1.1 }}
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * i }}
-              >
-                {t}
-              </motion.a>
-            ))}
+            {["About", "Projects", "Skills", "Certifications", "Contact"].map(
+              (t, i) => (
+                <motion.a
+                  key={t}
+                  href={`#${t.toLowerCase()}`}
+                  className="hover:text-white transition-colors uppercase"
+                  whileHover={{ scale: 1.1 }}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i }}
+                >
+                  {t}
+                </motion.a>
+              ),
+            )}
           </motion.div>
-
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -610,7 +670,6 @@ export default function Portfolio() {
               />
             </motion.div>
           </motion.div>
-
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden text-white p-2"
@@ -618,7 +677,6 @@ export default function Portfolio() {
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
@@ -628,7 +686,13 @@ export default function Portfolio() {
               className="md:hidden bg-black border-t border-zinc-900"
             >
               <div className="px-4 py-6 space-y-4">
-                {["About", "Projects", "Skills", "Contact"].map((t) => (
+                {[
+                  "About",
+                  "Projects",
+                  "Skills",
+                  "Certifications",
+                  "Contact",
+                ].map((t) => (
                   <a
                     key={t}
                     href={`#${t.toLowerCase()}`}
@@ -654,75 +718,31 @@ export default function Portfolio() {
         </AnimatePresence>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 md:px-6">
+      <main className="max-w-6xl mx-auto pt-16 px-4 md:px-6">
         {/* Hero Section */}
         <section
           id="about"
-          className="min-h-screen flex flex-col justify-center relative"
-          style={{ paddingTop: "5rem", paddingBottom: "2rem" }}
+          className="flex flex-col justify-center relative pt-20 pb-6 md:min-h-screen md:pt-0 md:pb-8"
         >
           <div className="relative z-10 w-full">
-            <style>{`
-              /* ── MOBILE HERO: full-bleed breakout ── */
-              .hero-mobile {
-                display: block;
-                padding-bottom: 1.5rem;
-              }
-              .hero-mobile .word {
-                display: block;
-                font-weight: 900;
-                text-transform: uppercase;
-                letter-spacing: -0.04em;
-                line-height: 0.84;
-                white-space: nowrap;
-                /* Scale each word to fill the container width */
-                width: fit-content;
-              }
-              /*
-               * Available width = 100vw - 2*padding(1rem) = calc(100vw - 2rem)
-               * MACHINE   = 7 chars  → ~19vw per char fits at ~0.85 tracking
-               * LEARNING  = 8 chars  → same
-               * ENTHUSIAST. = 11 chars
-               * Use transform scaleX to perfectly fill width
-               */
-              .hero-mobile .w-machine {
-                font-size: clamp(3rem, 18.5vw, 8rem);
-              }
-              .hero-mobile .w-learning {
-                font-size: clamp(3rem, 18.5vw, 8rem);
-              }
-              .hero-mobile .w-enthusiast {
-                font-size: clamp(1.8rem, 11.5vw, 5rem);
-                color: #3f3f46;
-              }
-
-              /* ── DESKTOP ── */
-              .hero-desktop {
-                display: none;
-                font-weight: 900;
-                text-transform: uppercase;
-                letter-spacing: -0.03em;
-                line-height: 0.85;
-                margin-bottom: 1.5rem;
-                font-size: clamp(8rem, 14vw, 11.25rem);
-              }
-              @media (min-width: 768px) {
-                .hero-mobile  { display: none; }
-                .hero-desktop { display: block; }
-              }
-            `}</style>
-
-            {/* ── MOBILE HERO: JS auto-fit ── */}
             <AutoFitHero />
-
-            {/* ── DESKTOP HERO ── */}
             <motion.div
               className="hidden md:block"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
-              <h1 className="hero-desktop text-center">
+              <h1
+                style={{
+                  fontWeight: 900,
+                  textTransform: "uppercase",
+                  letterSpacing: "-0.03em",
+                  lineHeight: 0.85,
+                  marginBottom: "1.5rem",
+                  fontSize: "clamp(8rem, 14vw, 11.25rem)",
+                  textAlign: "center",
+                }}
+              >
                 <motion.span
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -741,12 +761,11 @@ export default function Portfolio() {
                 </motion.span>
               </h1>
             </motion.div>
-
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.7 }}
-              className="text-sm md:text-xl lg:text-2xl text-zinc-400 max-w-3xl md:mx-auto font-medium leading-relaxed mb-8 md:mb-12 md:text-center"
+              className="text-sm md:text-xl lg:text-2xl text-zinc-400 max-w-3xl md:mx-auto font-medium leading-relaxed mb-6 md:mb-12 md:text-center"
             >
               <span className="text-white">Third-year</span> CS student at{" "}
               <span className="text-white">KIET</span> focused on the
@@ -754,7 +773,6 @@ export default function Portfolio() {
               <span className="text-white">Machine Learning</span> and{" "}
               <span className="text-white">Full-Stack Engineering</span>
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -767,23 +785,18 @@ export default function Portfolio() {
                   whileTap={{ scale: 0.95 }}
                   className="bg-white cursor-pointer text-black px-6 md:px-10 py-3 md:py-5 font-bold hover:bg-zinc-200 transition-all flex items-center gap-2 md:gap-3 text-sm md:text-lg"
                 >
-                  VIEW PROJECTS
-                  <motion.div
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                  >
-                    <ArrowUpRight size={20} className="md:w-6 md:h-6" />
-                  </motion.div>
+                  VIEW PROJECTS 
                 </motion.button>
               </a>
             </motion.div>
           </div>
         </section>
 
+        {/* GitHub Contribution Graph */}
         <GitHubContributionGraph />
 
         {/* PROJECTS SECTION */}
-        <section id="projects" className="mb-20 md:mb-32">
+        <section id="projects" className="mb-12 md:mb-32">
           <motion.h2
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -793,27 +806,43 @@ export default function Portfolio() {
             Selected Work
           </motion.h2>
           <div className="grid grid-cols-1 gap-8 md:gap-12">
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              whileHover={{ y: -10 }}
-              className="group relative border-l border-zinc-800 pl-4 md:pl-8 py-4 hover:border-white transition-colors"
-            >
-              <span className="text-[10px] md:text-xs text-zinc-500 font-mono mb-2 block">
-                01 / MACHINE LEARNING
-              </span>
-              <h3 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 group-hover:text-zinc-300 transition-colors">
-                Image-Based Medicinal Plant Classifier
-              </h3>
-              <p className="text-sm md:text-base text-zinc-400 max-w-2xl mb-4 md:mb-6">
-                A high-precision tool classifying 120+ medicinal plant species.
-                Integrating a custom CNN architecture with a MERN stack
-                dashboard for real-world Ayurvedic raw material authentication.
-              </p>
-              <div className="flex gap-2 md:gap-3 flex-wrap">
-                {["Python", "TensorFlow", "React", "Computer Vision"].map(
-                  (t, i) => (
+            {projects.map((project, idx) => (
+              <motion.div
+                key={project.num}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover={{ y: -10 }}
+                className="group relative border-l border-zinc-800 pl-4 md:pl-8 py-4 hover:border-white transition-colors"
+              >
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-3">
+                  <span className="text-[10px] md:text-xs text-zinc-500 font-mono">
+                    {project.num} / {project.category}
+                  </span>
+                  <span className="text-[10px] md:text-xs text-zinc-600 font-mono">
+                    {project.period}
+                  </span>
+                </div>
+                <h3 className="text-xl md:text-3xl font-bold mb-3 md:mb-4 group-hover:text-zinc-300 transition-colors">
+                  {project.title}
+                </h3>
+                <p className="text-sm md:text-base text-zinc-400 max-w-2xl mb-3 md:mb-4">
+                  {project.description}
+                </p>
+                {/* Highlight metrics */}
+                <div className="flex gap-3 flex-wrap mb-4 md:mb-6">
+                  {project.highlights.map((h) => (
+                    <span
+                      key={h}
+                      className="text-[9px] md:text-[11px] bg-emerald-950/50 text-emerald-400 border border-emerald-900 px-2 md:px-3 py-1 rounded-full font-bold uppercase tracking-wider"
+                    >
+                      {h}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-2 md:gap-3 flex-wrap">
+                  {project.tags.map((t, i) => (
                     <motion.span
                       key={t}
                       initial={{ opacity: 0, scale: 0.8 }}
@@ -825,15 +854,15 @@ export default function Portfolio() {
                     >
                       {t}
                     </motion.span>
-                  ),
-                )}
-              </div>
-            </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </section>
 
         {/* SKILLS & EDUCATION GRID */}
-        <div className="grid md:grid-cols-2 gap-12 md:gap-20 mb-20 md:mb-32">
+        <div className="grid md:grid-cols-2 gap-10 md:gap-20 mb-12 md:mb-32">
           <section id="skills">
             <motion.h2
               initial={{ opacity: 0, x: -20 }}
@@ -912,10 +941,57 @@ export default function Portfolio() {
           </section>
         </div>
 
+        {/* CERTIFICATIONS SECTION */}
+        <section id="certifications" className="mb-12 md:mb-32">
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="text-xs md:text-sm text-zinc-500 font-mono mb-8 md:mb-12 tracking-widest uppercase"
+          >
+            Certifications
+          </motion.h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {certifications.map((cert, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                whileHover={{ y: -4, borderColor: cert.color }}
+                className="border border-zinc-800 rounded-2xl p-4 md:p-6 flex items-start gap-4 transition-all duration-300 group"
+              >
+                <div
+                  className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center font-black text-[10px] md:text-xs tracking-wider"
+                  style={{
+                    backgroundColor: cert.color + "22",
+                    color: cert.color,
+                    border: `1px solid ${cert.color}44`,
+                  }}
+                >
+                  {cert.abbr}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-bold text-sm md:text-base leading-snug mb-1">
+                    {cert.title}
+                  </p>
+                  <p className="text-zinc-500 text-[10px] md:text-xs font-mono uppercase tracking-wider">
+                    {cert.issuer}
+                  </p>
+                </div>
+                <span className="flex-shrink-0 text-[10px] md:text-xs text-zinc-600 font-mono">
+                  {cert.date}
+                </span>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
         {/* CONTACT SECTION */}
         <section
           id="contact"
-          className="py-20 md:py-32 border-t border-zinc-900"
+          className="py-12 md:py-32 border-t border-zinc-900"
         >
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 md:gap-12">
             <motion.div
@@ -924,14 +1000,13 @@ export default function Portfolio() {
               viewport={{ once: true }}
               className="md:w-1/2"
             >
-              <h2 className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-6 md:mb-8">
+              <h2 className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter uppercase leading-[0.9] mb-4 md:mb-8">
                 Let's <br /> Connect
               </h2>
               <p className="text-zinc-500 italic max-w-xs leading-relaxed text-sm md:text-base">
                 Currently open for 2026/27 internships.
               </p>
             </motion.div>
-
             <div className="md:w-1/2 w-full space-y-4">
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
@@ -972,7 +1047,7 @@ export default function Portfolio() {
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        className="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-10 flex flex-col md:flex-row justify-between text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-zinc-700 gap-2 md:gap-0"
+        className="max-w-6xl mx-auto px-4 md:px-6 py-6 md:py-10 flex flex-col md:flex-row justify-between text-[8px] md:text-[10px] font-black uppercase tracking-[0.4em] text-zinc-700 gap-2 md:gap-0"
       >
         <span>© Ritesh Patel — 2026</span>
         <span>Ghaziabad, India</span>
