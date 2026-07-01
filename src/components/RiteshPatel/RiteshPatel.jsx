@@ -480,7 +480,7 @@ export default function Portfolio() {
             </p>
           </div>
           <a
-            href="mailto:riteshpatel1884@gmail.com"
+            href="https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=riteshpatel1884@gmail.com"
             className="flex items-center gap-2 self-start rp-mono"
             style={{
               fontSize: 12.5,
