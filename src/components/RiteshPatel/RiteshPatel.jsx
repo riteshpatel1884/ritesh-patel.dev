@@ -490,7 +490,7 @@ export default function Portfolio() {
               color: "var(--ink)",
             }}
           >
-            <MailIcon size={14} /> Say hello
+            <MailIcon size={14} /> Mail me
           </a>
         </section>
 
