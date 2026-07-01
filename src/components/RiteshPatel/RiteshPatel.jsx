@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { GitHubCalendar } from "react-github-calendar";
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import {GitHubCalendar} from "react-github-calendar";
+
 /* ---------------------------------------------------------- */
 /* Icons                                                       */
 /* ---------------------------------------------------------- */
@@ -105,19 +106,6 @@ const projects = [
   },
   {
     tag: "Web Platform",
-    date: "2026",
-    title: "Zentaras",
-    subtitle: "UDYAM-registered internship platform",
-    link: "zentaras.in",
-    points: [
-      "Shipped Data Analytics and Web Development internship tracks with a 5-step, role-specific progress system.",
-      "Built an admin dashboard with unlock/lock controls, points, and live applicant filtering.",
-      "Wired up Clerk auth with webhook user sync and a Prisma/Neon Postgres schema, deployed with custom DNS.",
-    ],
-    tech: ["Next.js", "Prisma", "Neon", "Clerk", "PostgreSQL"],
-  },
-  {
-    tag: "Web Platform",
     date: "2025 — 2026",
     title: "LeaderLab",
     subtitle: "Job application tracker & analytics suite",
@@ -174,243 +162,34 @@ const education = [
   },
 ];
 
-const MANUAL_COMMIT_DATA = {
-  "2026-01-01": { count: 11, level: 4 },
-  "2026-01-02": { count: 1, level: 1 },
-  "2026-01-03": { count: 3, level: 2 },
-  "2026-01-04": { count: 3, level: 2 },
-  "2026-01-05": { count: 2, level: 2 },
-  "2026-01-06": { count: 5, level: 2 },
-  "2026-01-08": { count: 1, level: 2 },
-  "2026-01-09": { count: 16, level: 4 },
-  "2026-01-10": { count: 5, level: 2 },
-  "2026-01-12": { count: 1, level: 2 },
-  "2026-01-13": { count: 4, level: 2 },
-  "2026-01-14": { count: 2, level: 2 },
-  "2026-01-19": { count: 6, level: 3 },
-  "2026-01-21": { count: 3, level: 2 },
-  "2026-01-22": { count: 3, level: 2 },
-  "2026-01-23": { count: 1, level: 2 },
-  "2026-01-26": { count: 27, level: 4 },
-  "2026-01-27": { count: 1, level: 1 },
-  "2026-01-28": { count: 3, level: 2 },
-  "2026-01-29": { count: 4, level: 2 },
-  "2026-01-30": { count: 3, level: 2 },
-  "2026-02-01": { count: 2, level: 2 },
-  "2026-02-02": { count: 2, level: 2 },
-  "2026-02-06": { count: 5, level: 2 },
-  "2026-02-07": { count: 39, level: 4 },
-  "2026-02-08": { count: 25, level: 4 },
-  "2026-02-09": { count: 11, level: 4 },
-  "2026-02-10": { count: 5, level: 2 },
-  "2026-02-11": { count: 6, level: 3 },
-  "2026-02-12": { count: 12, level: 4 },
-  "2026-02-13": { count: 23, level: 4 },
-  "2026-02-14": { count: 13, level: 4 },
-  "2026-02-15": { count: 13, level: 4 },
-  "2026-02-16": { count: 11, level: 4 },
-  "2026-02-17": { count: 15, level: 4 },
-  "2026-02-18": { count: 2, level: 1 },
-  "2026-02-19": { count: 6, level: 3 },
-  "2026-02-20": { count: 2, level: 1 },
-  "2026-02-22": { count: 1, level: 1 },
-  "2026-02-23": { count: 7, level: 3 },
-  "2026-02-24": { count: 6, level: 3 },
-  "2026-02-25": { count: 5, level: 2 },
-  "2026-02-26": { count: 5, level: 2 },
-  "2026-02-27": { count: 2, level: 1 },
-  "2026-02-28": { count: 4, level: 2 },
-  "2026-03-01": { count: 11, level: 4 },
-};
-
 /* ---------------------------------------------------------- */
-/* Commitment to Growth — activity ledger                      */
+/* Commitment to Growth — live GitHub calendar                 */
 /* ---------------------------------------------------------- */
-const ActivityLedger = () => {
-  const [weeks, setWeeks] = useState([]);
-  const [stats, setStats] = useState({
-    total: 0,
-    currentStreak: 0,
-    currentStreakRange: "",
-    longestStreak: 0,
-    longestStreakRange: "",
-  });
-  const [hoverData, setHoverData] = useState(null);
-  const gridRef = useRef(null);
-
-  useEffect(() => {
-    const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    const allDays = [];
-    let commitSum = 0;
-
-    const formatDateLabel = (dateStr) => {
-      if (!dateStr) return "";
-      const d = new Date(dateStr);
-      return `${monthNames[d.getMonth()]} ${String(d.getDate()).padStart(2, "0")}`;
-    };
-
-    for (let i = 0; i < 3; i++) allDays.push({ date: "empty", month: -1 });
-
-    for (let month = 0; month < 12; month++) {
-      for (let day = 1; day <= daysInMonth[month]; day++) {
-        const dateKey = `2026-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        const manualEntry = MANUAL_COMMIT_DATA[dateKey] || { count: 0, level: 0 };
-        commitSum += manualEntry.count;
-        allDays.push({
-          date: dateKey,
-          count: manualEntry.count,
-          level: manualEntry.level,
-          month,
-          monthName: monthNames[month],
-          day,
-        });
-      }
-    }
-
-    const activeDates = Object.keys(MANUAL_COMMIT_DATA)
-      .filter((d) => MANUAL_COMMIT_DATA[d].count > 0)
-      .sort((a, b) => new Date(a) - new Date(b));
-
-    let longest = 0, longestStart = "", longestEnd = "", current = 0;
-    let currentRangeStr = "No active streak";
-
-    if (activeDates.length > 0) {
-      let tempStreak = 1, tempStart = activeDates[0];
-      for (let i = 1; i < activeDates.length; i++) {
-        const prev = new Date(activeDates[i - 1]);
-        const curr = new Date(activeDates[i]);
-        const diffDays = (curr - prev) / 86400000;
-        if (diffDays === 1) {
-          tempStreak++;
-        } else {
-          if (tempStreak >= longest) { longest = tempStreak; longestStart = tempStart; longestEnd = activeDates[i - 1]; }
-          tempStreak = 1;
-          tempStart = activeDates[i];
-        }
-      }
-      if (tempStreak >= longest) { longest = tempStreak; longestStart = tempStart; longestEnd = activeDates[activeDates.length - 1]; }
-
-      const todayReference = new Date("2026-02-16");
-      const lastCommitDate = new Date(activeDates[activeDates.length - 1]);
-      const diffFromToday = (todayReference - lastCommitDate) / 86400000;
-
-      if (diffFromToday <= 1) {
-        let currentStreakCount = 0, pointer = activeDates.length - 1, currentStreakStart = activeDates[pointer];
-        while (pointer >= 0) {
-          if (pointer === activeDates.length - 1) {
-            currentStreakCount = 1;
-          } else {
-            const nextDate = new Date(activeDates[pointer + 1]);
-            const thisDate = new Date(activeDates[pointer]);
-            if ((nextDate - thisDate) / 86400000 === 1) {
-              currentStreakCount++;
-              currentStreakStart = activeDates[pointer];
-            } else break;
-          }
-          pointer--;
-        }
-        current = currentStreakCount;
-        currentRangeStr = `${formatDateLabel(currentStreakStart)} – ${formatDateLabel(activeDates[activeDates.length - 1])}`;
-      }
-    }
-
-    const longestRangeStr = longest > 0 ? `${formatDateLabel(longestStart)} – ${formatDateLabel(longestEnd)}` : "None";
-
-    while (allDays.length % 7 !== 0) allDays.push({ date: "empty", month: -1 });
-    const weeksData = [];
-    for (let i = 0; i < allDays.length; i += 7) weeksData.push(allDays.slice(i, i + 7));
-
-    setWeeks(weeksData);
-    setStats({
-      total: commitSum,
-      currentStreak: current,
-      currentStreakRange: currentRangeStr,
-      longestStreak: longest,
-      longestStreakRange: longestRangeStr,
-    });
-  }, []);
-
-  const getColor = (level) => `var(--lvl-${level ?? 0})`;
-
-  return (
-    <section className="rp-card rp-ledger">
-      <div className="rp-ledger-head">
-        <div>
-          <h2 className="rp-eyebrow">Commitment to Growth</h2>
-          <p className="rp-caption">Daily build &amp; commit log · 2026</p>
-        </div>
-        <div className="rp-ledger-stats">
-          <div className="rp-stat">
-            <span className="rp-stat-num">{stats.total}</span>
-            <span className="rp-stat-label">Commits</span>
-          </div>
-          <div className="rp-stat">
-            <span className="rp-stat-num">{stats.currentStreak}</span>
-            <span className="rp-stat-label">Current streak</span>
-            <span className="rp-stat-sub">{stats.currentStreakRange}</span>
-          </div>
-          <div className="rp-stat">
-            <span className="rp-stat-num">{stats.longestStreak}</span>
-            <span className="rp-stat-label">Longest streak</span>
-            <span className="rp-stat-sub">{stats.longestStreakRange}</span>
-          </div>
-        </div>
+const CommitmentToGrowth = ({ theme }) => (
+  <section className="rp-card rp-ledger">
+    <div className="rp-ledger-head">
+      <div>
+        <h2 className="rp-eyebrow">Commitment to Growth</h2>
+        <p className="rp-caption">Live GitHub activity · @riteshpatel1884</p>
       </div>
+    </div>
 
-      <div className="rp-ledger-grid-wrap" ref={gridRef}>
-        <div className="rp-ledger-grid">
-          {weeks.map((week, wi) => {
-            const firstDayOfMonth = week.find((d) => d.day === 1);
-            const showLabel = firstDayOfMonth || (wi === 0 && week[3] && week[3].month === 0);
-            return (
-              <div key={wi} className="rp-ledger-col">
-                {showLabel && <span className="rp-ledger-month">{showLabel.monthName}</span>}
-                {week.map((day, di) => (
-                  <div
-                    key={`${wi}-${di}`}
-                    onMouseEnter={(e) => {
-                      if (day.date === "empty") return;
-                      const rect = gridRef.current.getBoundingClientRect();
-                      setHoverData({ ...day, x: e.clientX - rect.left, y: e.clientY - rect.top });
-                    }}
-                    onMouseLeave={() => setHoverData(null)}
-                    className={`rp-cell ${day.date === "empty" ? "rp-cell-empty" : ""}`}
-                    style={{ backgroundColor: day.date === "empty" ? "var(--rule)" : getColor(day.level) }}
-                  />
-                ))}
-              </div>
-            );
-          })}
-        </div>
-
-        <AnimatePresence>
-          {hoverData && (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.12 }}
-              className="rp-tooltip"
-              style={{ left: hoverData.x, top: hoverData.y - 54 }}
-            >
-              <span className="rp-tooltip-count">{hoverData.count} commits</span>
-              <span className="rp-tooltip-date">{hoverData.date}</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-
-      <div className="rp-ledger-legend">
-        <span>Less</span>
-        {[0, 1, 2, 3, 4].map((l) => (
-          <span key={l} className="rp-legend-cell" style={{ backgroundColor: `var(--lvl-${l})` }} />
-        ))}
-        <span>More</span>
-      </div>
-    </section>
-  );
-};
+    <div className="rp-calendar-wrap">
+      <GitHubCalendar
+        username="riteshpatel1884"
+        colorScheme={theme}
+        theme={{
+          light: ["rgba(30,28,22,0.08)", "#cdd9c4", "#93b586", "#5c9260", "#33553c"],
+          dark: ["rgba(236,229,212,0.06)", "#2a3a28", "#3d5b3c", "#588a55", "#86b98d"],
+        }}
+        fontSize={12}
+        blockSize={11}
+        blockMargin={3}
+        style={{ color: "var(--muted)" }}
+      />
+    </div>
+  </section>
+);
 
 /* ---------------------------------------------------------- */
 /* Main                                                         */
@@ -431,11 +210,6 @@ export default function Portfolio() {
           --accent-2: #a6763a;
           --card: #fffdf8;
           --shadow: rgba(30,28,22,0.08);
-          --lvl-0: rgba(30,28,22,0.08);
-          --lvl-1: #cdd9c4;
-          --lvl-2: #93b586;
-          --lvl-3: #5c9260;
-          --lvl-4: #33553c;
           font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
           background: var(--paper);
           color: var(--ink);
@@ -452,11 +226,6 @@ export default function Portfolio() {
           --accent-2: #d9a75f;
           --card: #1c1b14;
           --shadow: rgba(0,0,0,0.5);
-          --lvl-0: rgba(236,229,212,0.06);
-          --lvl-1: #2a3a28;
-          --lvl-2: #3d5b3c;
-          --lvl-3: #588a55;
-          --lvl-4: #86b98d;
         }
         .rp-serif { font-family: Georgia, "Iowan Old Style", "Palatino Linotype", "Times New Roman", serif; }
         .rp-mono { font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace; }
@@ -486,30 +255,13 @@ export default function Portfolio() {
         }
         .rp-toggle:hover { transform: rotate(20deg); }
 
-        /* Ledger */
+        /* Commitment to Growth card */
         .rp-ledger { padding: 28px 24px; margin: 0; position: relative; }
         .rp-ledger-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
-        .rp-ledger-stats { display: flex; gap: 28px; }
-        .rp-stat { display: flex; flex-direction: column; }
-        .rp-stat-num { font-family: Georgia, serif; font-weight: 700; font-size: 26px; color: var(--accent); line-height: 1; }
-        .rp-stat-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 4px; font-weight: 700; }
-        .rp-stat-sub { font-family: ui-monospace, monospace; font-size: 9px; color: var(--muted); margin-top: 2px; }
-        .rp-ledger-grid-wrap { position: relative; overflow-x: auto; padding: 22px 2px 6px; }
-        .rp-ledger-grid { display: flex; gap: 3px; min-width: max-content; }
-        .rp-ledger-col { display: flex; flex-direction: column; gap: 3px; position: relative; }
-        .rp-ledger-month { position: absolute; top: -18px; left: 0; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 700; white-space: nowrap; }
-        .rp-cell { width: 11px; height: 11px; border-radius: 2px; cursor: crosshair; }
-        .rp-cell:hover { outline: 1.5px solid var(--accent); outline-offset: 1px; }
-        .rp-cell-empty { cursor: default; }
-        .rp-tooltip {
-          position: absolute; z-index: 20; background: var(--ink); color: var(--paper);
-          padding: 6px 10px; border-radius: 4px; pointer-events: none; display: flex; flex-direction: column;
-          box-shadow: 0 4px 12px var(--shadow);
-        }
-        .rp-tooltip-count { font-size: 11px; font-weight: 700; }
-        .rp-tooltip-date { font-size: 9px; opacity: 0.7; font-family: ui-monospace, monospace; }
-        .rp-ledger-legend { display: flex; align-items: center; gap: 5px; font-size: 9px; color: var(--muted); margin-top: 6px; font-family: ui-monospace, monospace; }
-        .rp-legend-cell { width: 9px; height: 9px; border-radius: 2px; }
+        .rp-calendar-wrap { overflow-x: auto; padding: 4px 2px 6px; }
+        .rp-calendar-wrap .react-activity-calendar__scroll-container { padding-bottom: 4px; }
+        .rp-calendar-wrap text { fill: var(--muted) !important; font-family: ui-monospace, monospace !important; }
+        .rp-calendar-wrap svg rect { rx: 2px; }
 
         /* Skill pill */
         .rp-pill {
@@ -564,15 +316,18 @@ export default function Portfolio() {
         {/* Summary */}
         <section className="mb-12">
           <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--ink)", maxWidth: 640 }}>
-           Fourth year Computer Science student building expertise in <strong>Backend Engineering and Generative AI</strong>. Experienced in designing scalable backend systems, secure APIs, databases, authentication, and deploying full-stack applications while exploring AI-driven products and intelligent software.
+            Fourth year Computer Science student building expertise in <strong>Backend Engineering and
+            Generative AI</strong>. Experienced in designing scalable backend systems, secure APIs,
+            databases, authentication, and deploying full-stack applications while exploring
+            AI-driven products and intelligent software.
           </p>
         </section>
 
         {/* Commitment to Growth */}
         <section className="mb-12">
-          <ActivityLedger />
+          <CommitmentToGrowth theme={theme} />
         </section>
-<GitHubCalendar username="riteshpatel1884" />
+
         {/* Projects */}
         <section className="mb-12">
           <h2 className="rp-eyebrow mb-6">Selected Work</h2>
