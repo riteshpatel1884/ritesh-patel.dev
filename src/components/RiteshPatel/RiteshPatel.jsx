@@ -90,6 +90,19 @@ const skillGroups = [
   },
 ];
 
+const experience = [
+  {
+    role: "Data Analytics Intern",
+    company: "Airkrit India Pvt. Ltd.",
+    date: "2025",
+    points: [
+      "Cleaned and analysed a 10-sheet Credit_Banking Excel workbook covering spend, repayment and interest calculations.",
+      "Delivered segment-level insights to support lending decisions.",
+    ],
+    tech: ["Excel", "Data Cleaning", "Financial Analysis"],
+  },
+];
+
 const projects = [
   {
     tag: "Web Platform",
@@ -97,6 +110,7 @@ const projects = [
     title: "Road to Offer",
     subtitle: "45-day placement preparation tracker",
     link: "road-to-offer.vercel.app",
+    href: "https://road-to-offer.vercel.app",
     points: [
       "Built a Next.js study tracker spanning DSA, Data Analyst, GenAI, Backend, Core and Aptitude tracks with per-topic tagging, notes and a “Today” filter.",
       "Implemented a full dark/light theming system driven by CSS variables across every view.",
@@ -110,6 +124,7 @@ const projects = [
     title: "LeaderLab",
     subtitle: "Job application tracker & analytics suite",
     link: "leaderlab.in",
+    href: "https://leaderlab.in",
     points: [
       "Designed an analytics dashboard with Recharts — radar charts, activity heatmaps and custom dark tooltips.",
       "Built a Prep Tracker linking daily study plans to live job applications.",
@@ -127,17 +142,6 @@ const projects = [
       "Trained and iterated on the model using a Kaggle workflow with peers at KIET.",
     ],
     tech: ["Python", "TensorFlow", "Computer Vision", "ViT"],
-  },
-  {
-    tag: "Internship",
-    date: "Data Analytics Intern",
-    title: "Airkrit India Pvt. Ltd.",
-    subtitle: "Credit & banking data analysis",
-    points: [
-      "Cleaned and analysed a 10-sheet Credit_Banking Excel workbook covering spend, repayment and interest calculations.",
-      "Delivered segment-level insights to support lending decisions.",
-    ],
-    tech: ["Excel", "Data Cleaning", "Financial Analysis"],
   },
 ];
 
@@ -272,6 +276,10 @@ export default function Portfolio() {
         /* Timeline dot */
         .rp-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--accent); }
 
+        /* Project link */
+        .rp-project-link { text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.15s ease; }
+        .rp-project-link:hover { border-color: var(--accent); }
+
         @media print {
           .rp-toggle { display: none; }
         }
@@ -328,6 +336,47 @@ export default function Portfolio() {
           <CommitmentToGrowth theme={theme} />
         </section>
 
+        {/* Experience */}
+        <section className="mb-12">
+          <h2 className="rp-eyebrow mb-6">Experience</h2>
+          <div className="flex flex-col">
+            {experience.map((e, i) => (
+              <motion.div
+                key={e.company}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                className="grid md:grid-cols-[150px_1fr] gap-2 md:gap-8 py-6"
+                style={{ borderTop: i === 0 ? "none" : "1px solid var(--rule)" }}
+              >
+                <div>
+                  <span className="rp-mono block" style={{ fontSize: 11, color: "var(--muted)" }}>{e.date}</span>
+                </div>
+                <div>
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <h3 className="rp-serif" style={{ fontSize: 20, fontWeight: 700 }}>{e.role}</h3>
+                  </div>
+                  <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 2, marginBottom: 10 }}>{e.company}</p>
+                  <ul style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {e.points.map((pt, idx) => (
+                      <li key={idx} className="flex gap-2.5" style={{ fontSize: 13.5, lineHeight: 1.55, color: "var(--ink)" }}>
+                        <span className="rp-dot shrink-0" style={{ marginTop: 7 }} />
+                        {pt}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="flex flex-wrap gap-2 mt-4">
+                    {e.tech.map((t) => (
+                      <span key={t} className="rp-pill">{t}</span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
         {/* Projects */}
         <section className="mb-12">
           <h2 className="rp-eyebrow mb-6">Selected Work</h2>
@@ -352,9 +401,15 @@ export default function Portfolio() {
                   <div className="flex items-baseline gap-2 flex-wrap">
                     <h3 className="rp-serif" style={{ fontSize: 20, fontWeight: 700 }}>{p.title}</h3>
                     {p.link && (
-                      <span className="flex items-center gap-1 rp-mono" style={{ fontSize: 11, color: "var(--muted)" }}>
+                      <a
+                        href={p.href || `https://${p.link}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 rp-mono rp-project-link"
+                        style={{ fontSize: 11, color: "var(--accent)" }}
+                      >
                         <ArrowIcon size={11} /> {p.link}
-                      </span>
+                      </a>
                     )}
                   </div>
                   <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 2, marginBottom: 10 }}>{p.subtitle}</p>
