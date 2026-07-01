@@ -475,9 +475,7 @@ export default function Portfolio() {
         <section style={{ borderTop: "1px solid var(--rule)", paddingTop: 32 }} className="flex flex-col md:flex-row justify-between gap-6">
           <div>
             <h2 className="rp-serif" style={{ fontSize: 26, fontWeight: 700 }}>Let's work together.</h2>
-            <p style={{ fontSize: 13, color: "var(--muted)", marginTop: 6, maxWidth: 360 }}>
-              Currently open for 2026/27 internships in GenAI and full-stack engineering.
-            </p>
+           
           </div>
           <a
             href="https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=riteshpatel1884@gmail.com"
